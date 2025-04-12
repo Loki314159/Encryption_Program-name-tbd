@@ -9,5 +9,5 @@ trifid keys with multiple of the same character will always have pecularities th
 
 current program works with all ciphers (not RSA) on "Sample_Test_Text.txt" it also doesnt work with caesar because some of the special characters used don't exist in my list, (trifid only with a good key)
 
-12/04/2025
-
+13/04/2025
+its on github now, so I will have daily updates on what I wrote all organised n stuff
