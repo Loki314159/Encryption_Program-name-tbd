@@ -1,0 +1,13 @@
+11/04/2025
+reading through the assignment, downloaded rsa.py loginscreen.py and the creds.txt. will grab the ico later, just sorta making sure I know what to write.
+I already did lots of the assesment through Ass 1 and 2 so I will include the version I have currently before Ass 3 was handed to us.
+
+current thoughts on implementing RSA to work with texts as long as I want without arbitrarily generating larger keys (takes too long imo)
+
+Current version of the program has a UI that does not scale with the window dynamically though all encryption algorithms work but RSA and given the valid test characters work without issue
+trifid keys with multiple of the same character will always have pecularities that is inherent with the encryption
+
+current program works with all ciphers (not RSA) on "Sample_Test_Text.txt" it also doesnt work with caesar because some of the special characters used don't exist in my list, (trifid only with a good key)
+
+12/04/2025
+

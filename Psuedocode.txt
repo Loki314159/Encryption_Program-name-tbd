@@ -1,0 +1,158 @@
+trifidButton=Button(ON CLICK CALL trifid)
+caeserButton=Button(ON CLICK CALL caeser)
+RSAButton=Button(ON CLICK CALL RSA)
+b64Button=Button(ON CLICK CALL base64)
+substitutionButton=Button(ON CLICK CALL substitution)
+
+encryptButton= NULL
+decryptButton= NULL
+
+FUNCTION resetVariables
+    ciphertext = ""
+    plaintext = ""
+    keyText = 0
+    cipherKey = ""
+    shift = 0
+    method = ""
+END FUNCTION
+
+FUNCTION forgetAll
+    FORGET widgets
+END FUNCTION
+
+FUNCTION trifid
+    SET encryptButton = CALL trifidEncrypt
+    SET decryptButton = CALL trifidDecrypt
+    SET shift = userinput
+    SET ciphertext = userinput
+    SET plaintext = userinput
+    INITIALISE trifid widgets
+END FUNCTION
+
+FUNCTION caesar
+    SET encryptButton = CALL caesarEncrypt
+    SET decryptButton = CALL caesarDecrypt
+    SET shift = userinput
+    SET ciphertext = userinput
+    SET plaintext = userinput
+    INITIALISE caesar widgets
+END FUNCTION
+
+FUNCTION RSA
+    SET encryptButton = CALL RSAEncrypt
+    SET decryptButton = CALL RSADecrypt
+    SET shift = userinput
+    SET ciphertext = userinput
+    SET plaintext = userinput
+    INITIALISE RSA widgets
+END FUNCTION
+
+FUNCTION base64
+    SET encryptButton = CALL base64Encrypt
+    SET decryptButton = CALL base64Decrypt
+    SET shift = userinput
+    SET ciphertext = userinput
+    SET plaintext = userinput
+    INITIALISE base64 widgets
+END FUNCTION
+
+FUNCTION substitution
+    SET encryptButton = CALL substitutionEncrypt
+    SET decryptButton = CALL substitutionDecrypt
+    SET shift = userinput
+    SET ciphertext = userinput
+    SET plaintext = userinput
+    INITIALISE substitution widgets
+END FUNCTION
+
+
+FUNCTION trifidEncrypt
+    resetVariables
+    PASS IN: plainText
+    PASS IN: key
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION caesarEncrypt
+    PASS IN: plainText
+    PASS IN: shift
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION RSAPubEncrypt
+    PASS IN: plainText
+    PASS IN: publicKey
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION RSAPrivEncrypt
+    PASS IN: plainText
+    PASS IN: publicKey
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION base64Encrypt
+    PASS IN: plainText
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION substitutionEncrypt
+    PASS IN: plainText
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION trifidDecrypt
+    PASS IN: plainText
+    PASS IN: key
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION caesarDecrypt
+    PASS IN: plainText
+    PASS IN: shift
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION RSAPubDecrypt
+    PASS IN: plainText
+    PASS IN: privateKey
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION RSAPrivDecrypt
+    PASS IN: plainText
+    PASS IN: privateKey
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION base64Decrypt
+    PASS IN: plainText
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+FUNCTION substitutionDecrypt
+    PASS IN: plainText
+    trifid ON plainText
+    PASS OUT: cipherText
+END FUNCTION
+
+
+
+START
+    CALL resetVariables
+    INITIALISE GUI
+    USER SELECTS encryption method
+    USER INPUTS ciphertext, plaintext etc based on encryption method
+    USER SELECTS encrypt or decrypt unless RSA where USER SELECTS privencrypt, pubencrypt, privdecrypt, pubdecrypt
+END
