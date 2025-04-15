@@ -13,5 +13,10 @@ current program works with all ciphers (not RSA) on "Sample_Test_Text.txt" it al
 its on github now, so I will have daily updates on what I wrote all organised n stuff
 
 14/04/2025
+RSA (mostly) implemented using the RSA.py from classroom
 
-RSA (mostly) implemented using the RSA.py from classroom)
+15/04/2025
+like 1 line of code and all the RSA now works (public decrypt not working, may figure that one out at the end or sumn)
+application works, login screen is implemented but the creds are still currently unencrypted and there is currently no way for the username and password to be changed
+
+

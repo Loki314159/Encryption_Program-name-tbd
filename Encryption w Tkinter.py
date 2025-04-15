@@ -193,7 +193,7 @@ def RSAPubEncrypt():
     RSAGenKeys()
     plaintext=plaintextBox.get()
     publicKey=publicKeyBox.get()
-    rsa.encryptRSA(plaintext, publicKey)
+    ciphertext=rsa.encryptRSA(plaintext, publicKey)
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
@@ -202,7 +202,7 @@ def RSAPrivEncrypt():
     RSAGenKeys()
     plaintext=plaintextBox.get()
     privateKey=privateKeyBox.get()
-    rsa.encryptRSA(plaintext, privateKey)
+    ciphertext=rsa.encryptRSA(plaintext, privateKey)
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
@@ -263,7 +263,7 @@ def RSAPubDecrypt():
     RSAGenKeys()
     ciphertext=ciphertextBox.get()
     publicKey=publicKeyBox.get()
-    rsa.decryptRSA(ciphertext, publicKey)
+    plaintext=rsa.decryptRSA(ciphertext, publicKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
@@ -272,7 +272,7 @@ def RSAPrivDecrypt():
     RSAGenKeys()
     ciphertext=ciphertextBox.get()
     privateKey=privateKeyBox.get()
-    rsa.decryptRSA(ciphertext, publicKey)
+    plaintext=rsa.decryptRSA(ciphertext, privateKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
@@ -292,46 +292,46 @@ def substitutionDecrypt():
         plaintext+=chr(int(i))
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
+if ls.start():
+    window=tk.Tk()
+    window.columnconfigure([0, 1], minsize=25)
+    window.rowconfigure([0], minsize=10)
 
-window=tk.Tk()
-window.columnconfigure([0, 1], minsize=25)
-window.rowconfigure([0], minsize=10)
+    trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid")
+    caeserButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caeser, text="Caeser")
+    RSAButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= RSA, text="RSA")
+    b64Button=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= base64, text="Base 64")
+    substitutionButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= substitution, text="Substitution")
 
-trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid")
-caeserButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caeser, text="Caeser")
-RSAButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= RSA, text="RSA")
-b64Button=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= base64, text="Base 64")
-substitutionButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= substitution, text="Substitution")
+    trifidButton.grid(column=0, row=0)
+    caeserButton.grid(column=0, row=1)
+    RSAButton.grid(column=0, row=2)
+    b64Button.grid(column=0, row=3)
+    substitutionButton.grid(column=0, row=4)
 
-trifidButton.grid(column=0, row=0)
-caeserButton.grid(column=0, row=1)
-RSAButton.grid(column=0, row=2)
-b64Button.grid(column=0, row=3)
-substitutionButton.grid(column=0, row=4)
+    plaintextLabel=tk.Label(text="Plaintext:")
+    plaintextBox=tk.Entry(textvariable="", justify="left")
 
-plaintextLabel=tk.Label(text="Plaintext:")
-plaintextBox=tk.Entry(textvariable="", justify="left")
+    ciphertextLabel=tk.Label(text="Ciphertext:")
+    ciphertextBox=tk.Entry(textvariable="", justify="left")
 
-ciphertextLabel=tk.Label(text="Ciphertext:")
-ciphertextBox=tk.Entry(textvariable="", justify="left")
+    encryptButton=tk.Button(text="Encrypt", bg="hotpink")
+    decryptButton=tk.Button(text="Decrypt", bg="hotpink")
+    encryptButton2=tk.Button(text="Encrypt", bg="hotpink")
+    decryptButton2=tk.Button(text="Decrypt", bg="hotpink")
 
-encryptButton=tk.Button(text="Encrypt", bg="hotpink")
-decryptButton=tk.Button(text="Decrypt", bg="hotpink")
-encryptButton2=tk.Button(text="Encrypt", bg="hotpink")
-decryptButton2=tk.Button(text="Decrypt", bg="hotpink")
+    keyBox=tk.Entry(textvariable="")
+    keyLabel=tk.Label(text="Key:")
 
-keyBox=tk.Entry(textvariable="")
-keyLabel=tk.Label(text="Key:")
+    shiftBox=tk.Entry(textvariable="")
+    shiftLabel=tk.Label(text="Shift:")
 
-shiftBox=tk.Entry(textvariable="")
-shiftLabel=tk.Label(text="Shift:")
+    privateKeyBox=tk.Entry(textvariable="")
+    privateKeyLabel=tk.Label(text="Private Key:")
 
-privateKeyBox=tk.Entry(textvariable="")
-privateKeyLabel=tk.Label(text="Private Key:")
-
-publicKeyBox=tk.Entry(textvariable="")
-publicKeyLabel=tk.Label(text="Public Key:")
+    publicKeyBox=tk.Entry(textvariable="")
+    publicKeyLabel=tk.Label(text="Public Key:")
 
 
-window.mainloop()
+    window.mainloop()
 
