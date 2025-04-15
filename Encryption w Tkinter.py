@@ -1,7 +1,9 @@
 import tkinter as tk
 import numpy as np
 import base64 as b64
-import rsa as rsa
+import RSA as rsa
+import LoginScreen as ls
+
 
 def resetVariables():
     global ciphertext
@@ -15,6 +17,8 @@ def resetVariables():
     global zCoordinate
     global cipherKey
     global asciiList
+    global publicKey
+    global privateKey
     ciphertext=""
     cipherList=[]
     cipherNumbers=[]
@@ -26,6 +30,8 @@ def resetVariables():
     zCoordinate = []
     cipherKey=[]
     asciiList=list(""" !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n""")
+    publicKey=""
+    privateKey=""
 resetVariables()
 
 def forgetAll():
@@ -54,6 +60,17 @@ def lightBlueButtons():
     RSAButton.config(bg="lightblue", fg="black")
     b64Button.config(bg="lightblue", fg="black")
     substitutionButton.config(bg="lightblue", fg="black")
+
+def RSAGenKeys():
+    if privateKeyBox.get() and publicKeyBox.get():
+        return privateKeyBox.get(), publicKeyBox.get()
+    privateKey, publicKey = rsa.makeRSAKey()
+    privateKeyBox.delete(0, tk.END)
+    privateKeyBox.insert(0, privateKey)
+    publicKeyBox.delete(0, tk.END)
+    publicKeyBox.insert(0, publicKey)
+    return privateKey, publicKey
+
 
 def trifid():
     print("trifid")
@@ -92,14 +109,14 @@ def RSA():
     lightBlueButtons()
     print("RSA")
     RSAButton.config(bg="blue", fg="white")
-    decryptButton.config(command=RSAPubDecrypt, text="Pub Encrypt")
-    encryptButton.config(command=RSAPubEncrypt, text="Pub Decrypt")
-    encryptButton2.config(command=RSAPrivDecrypt, text="Priv Encrypt")
-    decryptButton2.config(command=RSAPrivEncrypt, text="Pub Decrypt")
-    encryptButton.grid(column=1, row=2, sticky="nw")
-    decryptButton.grid(column=1, row=2, sticky="ne")
-    encryptButton2.grid(column=1, row=2, sticky="sw")
-    decryptButton2.grid(column=1, row=2, sticky="se")
+    decryptButton.config(command=RSAPubDecrypt, text="Pub Decrypt")
+    encryptButton.config(command=RSAPubEncrypt, text="Pub Encrypt")
+    decryptButton2.config(command=RSAPrivDecrypt, text="Priv Decrypt")
+    encryptButton2.config(command=RSAPrivEncrypt, text="Priv Encrypt")
+    decryptButton.grid(column=1, row=2, sticky="nw")
+    encryptButton.grid(column=1, row=2, sticky="ne")
+    decryptButton2.grid(column=1, row=2, sticky="sw")
+    encryptButton2.grid(column=1, row=2, sticky="se")
     publicKeyBox.grid(column=1, row=1, sticky="w")
     publicKeyLabel.grid(column=1, row=1, sticky="nw")
     privateKeyBox.grid(column=1, row=3, sticky="w")
@@ -171,18 +188,21 @@ def caeserEncrypt():
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
-def RSAPubEncrypt(): #ts pmo its no working rn
+def RSAPubEncrypt():
     resetVariables()
+    RSAGenKeys()
     plaintext=plaintextBox.get()
-    with open("public.pem", "rb") as f:
-        publicKey = rsa.PublicKey.load_pkcs1(f.read())
-    ciphertext = rsa.encrypt(plaintext.encode(), publicKey)     
+    publicKey=publicKeyBox.get()
+    rsa.encryptRSA(plaintext, publicKey)
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
 def RSAPrivEncrypt():
     resetVariables()
-    print(plaintextBox.get())
+    RSAGenKeys()
+    plaintext=plaintextBox.get()
+    privateKey=privateKeyBox.get()
+    rsa.encryptRSA(plaintext, privateKey)
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
@@ -240,13 +260,19 @@ def caeserDecrypt():
 
 def RSAPubDecrypt():
     resetVariables()
-    print(ciphertextBox.get())
+    RSAGenKeys()
+    ciphertext=ciphertextBox.get()
+    publicKey=publicKeyBox.get()
+    rsa.decryptRSA(ciphertext, publicKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
 def RSAPrivDecrypt():
     resetVariables()
-    print(ciphertextBox.get())
+    RSAGenKeys()
+    ciphertext=ciphertextBox.get()
+    privateKey=privateKeyBox.get()
+    rsa.decryptRSA(ciphertext, publicKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
@@ -284,7 +310,7 @@ b64Button.grid(column=0, row=3)
 substitutionButton.grid(column=0, row=4)
 
 plaintextLabel=tk.Label(text="Plaintext:")
-plaintextBox=tk.Entry(textvariable="")
+plaintextBox=tk.Entry(textvariable="", justify="left")
 
 ciphertextLabel=tk.Label(text="Ciphertext:")
 ciphertextBox=tk.Entry(textvariable="", justify="left")

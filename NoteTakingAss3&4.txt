@@ -11,3 +11,7 @@ current program works with all ciphers (not RSA) on "Sample_Test_Text.txt" it al
 
 13/04/2025
 its on github now, so I will have daily updates on what I wrote all organised n stuff
+
+14/04/2025
+
+RSA (mostly) implemented using the RSA.py from classroom)

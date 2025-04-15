@@ -47,7 +47,7 @@ def decryptRSA(cipherText, privateKey):
 def main():
     privateKey, publicKey = makeRSAKey()
 
-    plainText = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a mauris id mi mattis hendrerit. Mauris a ornare neque. Nulla imperdiet gravida massa et molestie. Integer ultrices, metus quis consectetur mollis, dui libero."""
+    plainText = """Banana"""
 
     encryptedRSA = encryptRSA(plainText, publicKey)
     decryptedRSA = decryptRSA(encryptedRSA, privateKey)
@@ -56,7 +56,7 @@ def main():
     print(f"RSA Public Key:\n{publicKey}")
     print(f"RSA Encrypted:\n{encryptedRSA}")
     print(f"RSA Decrypted:\n{decryptedRSA}")
-__name__ = "__main__"
+
 #This allows the code to be tested on its own
 if __name__ == "__main__":
     main()
