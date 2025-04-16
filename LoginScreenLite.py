@@ -36,22 +36,6 @@ def setupWindow():
 
     return loginWindow
 
-def readCredentials():
-
-    savedUName = "dumyValue...MG^wUR!EHY2HqG1THhTay8^TR8GfacQXqbD6PSH1CuABNZh$vX6Pz%FXhr3e"
-    savedPWord = "dumyValue...svPDgYhU4G8W^tLKhBe$F1hM&7Bv&TqW5a%Xf@U@T*%ej1Qkvb6^pX^SKkgZ"
-
-    credentialsFile = open("credentials.txt", "r")
-
-    for line in credentialsFile:
-        line = line.split(":", 1)
-        if line[0] == "username":
-            savedUName = line[1].replace('\n', '')
-        if line[0] == "password":
-            savedPWord = line[1].replace('\n', '')
-    credentialsFile.close()
-
-    return (savedUName, savedPWord)
 
 def disable_close():
     messagebox.showwarning("No Closing", "Sorry, you didn't say the magic words... \nTry again")
@@ -61,16 +45,24 @@ def login(event=None):
         loginWindow.destroy()
 
 def testLogin():
-    savedUName, savedPWord = readCredentials()
+    
 
     userUName = loginWindow.unameText.get()
     userPWord = loginWindow.pwordText.get()
+    
+    credentialsFile = open("credentials.txt", "r")
 
-    if savedUName == userUName and savedPWord == userPWord:
-        messagebox.showinfo("Login Permitted.", "Login Permitted.\nProceeding to Main Program.")
-        return True
-    else:
-        messagebox.showwarning("Invalid Cridentials","Sorry, supplied Username and Password\ndo not match reccords. \n\nTry again")
-        return False
+    for line in credentialsFile:
+        line = line.split(":", 2)
+        if userUName == line[0].replace('\n', ''):
+            if userPWord == line[1].replace('\n', ''):
+                credentialsFile.close() #Not sure if python would automatically close it, seems like a good idea though
+                messagebox.showinfo("Login Permitted.", "Login Permitted.\nProceeding to Main Program.")
+                return True
+    
+    credentialsFile.close()
+    messagebox.showwarning("Invalid Cridentials","Sorry, supplied Username and Password\ndo not match reccords. \n\nTry again")
+    return False
+    #return true if its good and false if EOF error (iterate over everything)
 
 start()

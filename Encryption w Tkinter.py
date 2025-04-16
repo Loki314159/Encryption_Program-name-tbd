@@ -3,6 +3,7 @@ import numpy as np
 import base64 as b64
 import RSA as rsa
 import LoginScreen as ls
+import os
 
 
 def resetVariables():
@@ -53,6 +54,15 @@ def forgetAll():
     publicKeyLabel.grid_forget()
     privateKeyBox.grid_forget()
     privateKeyLabel.grid_forget()
+    changePasswordButton.grid_forget()
+    changeUsernameButton.grid_forget()
+    newUserButton.grid_forget()
+    usernameBox.grid_forget()
+    usernameLabel.grid_forget()
+    passwordBox.grid_forget()
+    passwordLabel.grid_forget()
+    uidBox.grid_forget()
+    uidLabel.grid_forget()
 
 def lightBlueButtons():
     trifidButton.config(bg="lightblue", fg="black")
@@ -60,6 +70,7 @@ def lightBlueButtons():
     RSAButton.config(bg="lightblue", fg="black")
     b64Button.config(bg="lightblue", fg="black")
     substitutionButton.config(bg="lightblue", fg="black")
+    changeDetailsButton.config(bg="lightblue", fg="black")
 
 def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
@@ -153,6 +164,23 @@ def substitution():
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0, sticky="w")
     plaintextLabel.grid(column=1, row=0, sticky="nw")
+
+def changeDetails():
+    forgetAll()
+    lightBlueButtons()
+    print("changeDetails")
+    changeDetailsButton.config(bg="blue", fg="white")
+    usernameBox.grid(column=1, row=0, sticky="w")
+    usernameLabel.grid(column=1, row=0, sticky="nw")
+    passwordBox.grid(column=1, row=1, sticky="w")
+    passwordLabel.grid(column=1, row=1, sticky="nw")
+    uidBox.grid(column=1, row=2, sticky="w")
+    uidLabel.grid(column=1, row=2, sticky="nw")
+    
+    changePasswordButton.grid(column="1", row="3", sticky="n")
+    changeUsernameButton.grid(column="1", row="3", sticky="s")
+    newUserButton.grid(column="1", row="4")
+
 
 
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
@@ -292,7 +320,88 @@ def substitutionDecrypt():
         plaintext+=chr(int(i))
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
-if ls.start():
+
+
+def changePassword():
+    print("changepass")
+    password=passwordBox.get()
+    uid=uidBox.get()
+    
+    credentialsFile = open("credentials.txt", "r")
+    newCredentialsFile = open("newcredentials.txt", "a") #append will automatically create file if it doesnt exist already
+    newuid="0"
+    if password=="":
+        return
+    if uid=="":
+        return
+    for line in credentialsFile:
+        line = line.split(":", 2)
+        print(line)
+        if uid == line[2].replace('\n', ''):
+            line[1] = password
+        newCredentialsFile.write(line[0] + ":" + line[1] + ":" + str(newuid) + "\n")
+        newuid= int(line[2])+1
+    
+    newCredentialsFile.close()
+    credentialsFile.close()
+    os.remove("credentials.txt")
+    os.rename("newcredentials.txt", "credentials.txt")
+
+def changeUsername():
+    print("changeuser")
+    username=usernameBox.get()
+    uid=uidBox.get()
+    
+    credentialsFile = open("credentials.txt", "r")
+    newCredentialsFile = open("newcredentials.txt", "a") #append will automatically create file if it doesnt exist already
+    newuid="0"
+    if username=="":
+        print("uname")
+        return
+    if uid=="":
+        print("uid")
+        return
+    for line in credentialsFile:
+        line = line.split(":", 2)
+        print(line)
+        if uid == line[2].replace('\n', ''):
+            line[0] = username
+            print("heehe")
+        newCredentialsFile.write(line[0] + ":" + line[1] + ":" + str(newuid) + "\n")
+        newuid= int(line[2])+1
+    
+    newCredentialsFile.close()
+    credentialsFile.close()
+    os.remove("credentials.txt")
+    os.rename("newcredentials.txt", "credentials.txt")
+
+def newUser():
+    print("newuser")
+    password=passwordBox.get()
+    username=usernameBox.get()
+
+    credentialsFile = open("credentials.txt", "r")
+    if username == "":
+        credentialsFile.close()
+        return
+    if password == "":
+        credentialsFile.close()
+        return
+    for line in credentialsFile:
+        line = line.split(":", 2)
+        print(line)
+        if username == line[0].replace('\n', ''):
+            return
+        uid=line[2].replace('\n', '')
+    credentialsFile.close()
+
+    newuid= int(uid)+1
+    credentialsFile = open("credentials.txt", "a")
+    credentialsFile.write(username + ":" + password + ":" + str(newuid) + "\n")    
+    credentialsFile.close()
+
+
+if plaintext == "" :#if ls.start(): replaces the while true #THIS WILL BE FIXED, ISTG IF ITS NOT I BIG SAD (this is for testing because I aint inputting creds when its not what I am testing)
     window=tk.Tk()
     window.columnconfigure([0, 1], minsize=25)
     window.rowconfigure([0], minsize=10)
@@ -302,12 +411,16 @@ if ls.start():
     RSAButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= RSA, text="RSA")
     b64Button=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= base64, text="Base 64")
     substitutionButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= substitution, text="Substitution")
+    
+    changeDetailsButton=tk.Button(height=1, width=4, borderwidth=2, bg="lightblue", command= changeDetails, text="Details")
 
     trifidButton.grid(column=0, row=0)
     caeserButton.grid(column=0, row=1)
     RSAButton.grid(column=0, row=2)
     b64Button.grid(column=0, row=3)
     substitutionButton.grid(column=0, row=4)
+    
+    changeDetailsButton.grid(column=1, row=0, sticky="ne")
 
     plaintextLabel=tk.Label(text="Plaintext:")
     plaintextBox=tk.Entry(textvariable="", justify="left")
@@ -315,10 +428,21 @@ if ls.start():
     ciphertextLabel=tk.Label(text="Ciphertext:")
     ciphertextBox=tk.Entry(textvariable="", justify="left")
 
+    usernameBox=tk.Entry(textvariable="", justify="left")
+    passwordBox=tk.Entry(textvariable="", justify="left")
+    uidBox=tk.Entry(textvariable="", justify="left")
+    usernameLabel=tk.Label(text="Username:")
+    passwordLabel=tk.Label(text="Password:")
+    uidLabel=tk.Label(text="UID:")
+
     encryptButton=tk.Button(text="Encrypt", bg="hotpink")
     decryptButton=tk.Button(text="Decrypt", bg="hotpink")
     encryptButton2=tk.Button(text="Encrypt", bg="hotpink")
     decryptButton2=tk.Button(text="Decrypt", bg="hotpink")
+
+    changePasswordButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changePassword, text="changePassword")
+    changeUsernameButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changeUsername, text="changeUsername")
+    newUserButton=tk.Button(height=1, width=6, borderwidth=2, bg="lightblue", command= newUser, text="newUser")
 
     keyBox=tk.Entry(textvariable="")
     keyLabel=tk.Label(text="Key:")
@@ -334,4 +458,3 @@ if ls.start():
 
 
     window.mainloop()
-

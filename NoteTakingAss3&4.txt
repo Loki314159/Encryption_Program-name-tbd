@@ -20,4 +20,17 @@ like 1 line of code and all the RSA now works (public decrypt not working, may f
 application works, login screen is implemented but the creds are still currently unencrypted and there is currently no way for the username and password to be changed
 gonna reverse engineer reading the credentials file and use that to encrypt/change the username & password tmrw
 
+16/04/2025
+bye bye CVEs (:sob:)
+redesigning creds file and thinking about encrypting the creds file, gonna do inline format of usernames and passwords *similar* to how windows/linux store stuff because I've been doing root to boot a lil bit and secretsdump.py stuff.
+going to dive into loginscreen to make this possible, github will still show all the changes I make, boy oh boy was that a smart idea :D
+
+can make new users, will make it so users and passwords cannot be null and that there can only be one of each user but passwords dont need that requirement.
+mkay cool so I decided that I wanted the multiple users but now I can't rlly change the username based on the password because its not exclusive to that user, guess I am gonna have to implement some form of uid ig since uhh sunk cost fallacy
+kinda thinking about how to do it and maybe I am just thinking in SQL because I like SQL, but I think some form of pysql might work. Be lazy efficiently
+
+tbh nvm about pysql, I am going to make my delineator smthn longer like ")!@(&&#()!@*#)" if I can, should be alr and I will note it into the how to use
+I understand not everyone may know their uid, so ima have a button that shows you, maybe I will do it automatically when you log in and have the box autofilled when you enter the profile, same with the other bits. might have to consume the loginscreen file to make this easier, will check assignment document for that though and implement this feature later
+I got ts working, its technically tmrw but idc
+its a bit ugly, but it IS functional so I will work on graphics l8r
 
