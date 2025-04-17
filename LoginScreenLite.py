@@ -50,19 +50,19 @@ def testLogin():
     userUName = loginWindow.unameText.get()
     userPWord = loginWindow.pwordText.get()
     
+
     credentialsFile = open("credentials.txt", "r")
 
     for line in credentialsFile:
         line = line.split(":", 2)
-        if userUName == line[0].replace('\n', ''):
-            if userPWord == line[1].replace('\n', ''):
-                credentialsFile.close() #Not sure if python would automatically close it, seems like a good idea though
-                messagebox.showinfo("Login Permitted.", "Login Permitted.\nProceeding to Main Program.")
-                return True
-    
+        knownUName = line[0].replace('\n', '')
+        knownPWord = line[1].replace('\n', '')
+        if userUName == knownUName and userPWord == knownPWord:
+            credentialsFile.close() #Not sure if python would automatically close it, seems like a good idea though
+            messagebox.showinfo("Login Permitted.", "Login Permitted.\nProceeding to Main Program.")
+            return True
+
     credentialsFile.close()
     messagebox.showwarning("Invalid Cridentials","Sorry, supplied Username and Password\ndo not match reccords. \n\nTry again")
     return False
     #return true if its good and false if EOF error (iterate over everything)
-
-start()

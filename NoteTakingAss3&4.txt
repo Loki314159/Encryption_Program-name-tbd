@@ -34,3 +34,16 @@ I understand not everyone may know their uid, so ima have a button that shows yo
 I got ts working, its technically tmrw but idc
 its a bit ugly, but it IS functional so I will work on graphics l8r
 
+17/04/2025
+bug with edited loginscreen, opens twice
+loginscreenlite called it inately if run, fixed that
+ima sleep
+
+gonna think about how I might be able to delete users, current thoughts would just be != and not write it into the new file, though with that it would still increment and leave gaps, definitely need to return someones id based on their user, also will still need to make the final rsa function work
+
+18/04/2025
+lets try implementing that now, might do two pushes today because of time stuff
+had some issues fixing the index because you can remove an index and username at once, maybe I'll change the functionality of that later
+I think i'll make some form of "request details based on user, pass, id" and have it somewhere near each field. should be good
+making sure it all works before i do optimisations and neaten up the code, though keeping it simple and clean for my personal benefit as I go along
+

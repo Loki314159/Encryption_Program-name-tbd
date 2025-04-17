@@ -2,7 +2,7 @@ import tkinter as tk
 import numpy as np
 import base64 as b64
 import RSA as rsa
-import LoginScreen as ls
+import LoginScreenLite as ls
 import os
 
 
@@ -63,6 +63,7 @@ def forgetAll():
     passwordLabel.grid_forget()
     uidBox.grid_forget()
     uidLabel.grid_forget()
+    removeUserButton.grid_forget()
 
 def lightBlueButtons():
     trifidButton.config(bg="lightblue", fg="black")
@@ -179,8 +180,8 @@ def changeDetails():
     
     changePasswordButton.grid(column="1", row="3", sticky="n")
     changeUsernameButton.grid(column="1", row="3", sticky="s")
-    newUserButton.grid(column="1", row="4")
-
+    newUserButton.grid(column="1", row="4", sticky="n")
+    removeUserButton.grid(column="1", row="4", sticky="s")
 
 
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
@@ -400,8 +401,32 @@ def newUser():
     credentialsFile.write(username + ":" + password + ":" + str(newuid) + "\n")    
     credentialsFile.close()
 
+def removeuser():
+    print("removeuser")
+    username=usernameBox.get()
+    uid=uidBox.get()
+    
+    credentialsFile = open("credentials.txt", "r")
+    newCredentialsFile = open("newcredentials.txt", "a") #append will automatically create file if it doesnt exist already
+    newuid="0"
+    replacedUsers=0
+    for line in credentialsFile:
+        line = line.split(":", 2)
+        if uid == line[2].replace('\n', '') or username == line[0].replace("\n", ""):
+            newuid= int(line[2])
+            replacedUsers+=1
+        else:
+            newCredentialsFile.write(line[0] + ":" + line[1] + ":" + str(newuid) + "\n")
+            
+        newuid= int(line[2]) + 1 - replacedUsers
+    
+    newCredentialsFile.close()
+    credentialsFile.close()
+    os.remove("credentials.txt")
+    os.rename("newcredentials.txt", "credentials.txt")
 
-if plaintext == "" :#if ls.start(): replaces the while true #THIS WILL BE FIXED, ISTG IF ITS NOT I BIG SAD (this is for testing because I aint inputting creds when its not what I am testing)
+
+if ls.start():
     window=tk.Tk()
     window.columnconfigure([0, 1], minsize=25)
     window.rowconfigure([0], minsize=10)
@@ -443,6 +468,7 @@ if plaintext == "" :#if ls.start(): replaces the while true #THIS WILL BE FIXED,
     changePasswordButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changePassword, text="changePassword")
     changeUsernameButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changeUsername, text="changeUsername")
     newUserButton=tk.Button(height=1, width=6, borderwidth=2, bg="lightblue", command= newUser, text="newUser")
+    removeUserButton=tk.Button(height=1, width=10, borderwidth=2, bg="lightblue", command= removeuser, text="removeuser")
 
     keyBox=tk.Entry(textvariable="")
     keyLabel=tk.Label(text="Key:")
