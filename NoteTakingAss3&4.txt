@@ -47,3 +47,17 @@ had some issues fixing the index because you can remove an index and username at
 I think i'll make some form of "request details based on user, pass, id" and have it somewhere near each field. should be good
 making sure it all works before i do optimisations and neaten up the code, though keeping it simple and clean for my personal benefit as I go along
 
+
+
+20/04/2025
+time to fix rsa size issues, gonna send to file, split to <=200 bytes size then recompile with somme bad char for rsa output and then throw that as ciphertext :D
+nvm decided not to do that and am just gonna use normal features to do it, realised a case in which the solution would split the text evenly by character which is great but not if theres say, 0 or A padding which forces a lot of larger characters at the end and then cause one of the iterations to fail and break the encryption of the chunked pieces so I am implementing some form of fail safe that checks each item and makes sure it is smaller than my given max byte value 
+every valid character I need to be able to handle will have equal size so that shouldnt be an issue in actual assessment and I do not need to handle the error I am not testing for
+should be fine
+it seems to work, will do the easier decrypting bit later
+not sure if the output input is correct, will check when physically at pc
+
+21/04/2025
+its definitely broken, it just kinda decrypts the first section of the message a bunch
+I was calling ciphertext instead of i in the for loop :D
+it works, praise to the machine gods (there were other solutions but I chose the easiest of just checking that the item being decrypted was not just empty)

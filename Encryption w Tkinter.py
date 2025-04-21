@@ -4,6 +4,7 @@ import base64 as b64
 import RSA as rsa
 import LoginScreenLite as ls
 import os
+import math
 
 
 def resetVariables():
@@ -220,9 +221,16 @@ def caeserEncrypt():
 def RSAPubEncrypt():
     resetVariables()
     RSAGenKeys()
+    ciphertext=""
     plaintext=plaintextBox.get()
     publicKey=publicKeyBox.get()
-    ciphertext=rsa.encryptRSA(plaintext, publicKey)
+
+    splitPlaintext = [plaintext[i:i+200] for i in range(0, len(plaintext), 200)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
+    print(splitPlaintext)
+    for i in splitPlaintext:
+        ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥"
+    print(ciphertext)
+        
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
@@ -301,7 +309,13 @@ def RSAPrivDecrypt():
     RSAGenKeys()
     ciphertext=ciphertextBox.get()
     privateKey=privateKeyBox.get()
-    plaintext=rsa.decryptRSA(ciphertext, privateKey)
+    plaintext=""
+    
+    cipherList=ciphertext.split("♥♥♥♥♥")
+    print(cipherList)
+    for i in cipherList:
+        if i != "":
+            plaintext+=rsa.decryptRSA(i, privateKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
