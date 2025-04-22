@@ -418,9 +418,8 @@ def removeuser():
 
 if ls.start():
     window=tk.Tk()
-    window.columnconfigure([0, 1], weight=1)
-    window.rowconfigure([0, 1, 2, 3, 4], weight=1)
     window.minsize(200, 300)
+    window.maxsize(200, 300)
 
     trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid")
     caeserButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caeser, text="Caeser")

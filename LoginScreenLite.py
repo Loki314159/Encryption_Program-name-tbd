@@ -16,6 +16,8 @@ def start():
 def setupWindow():
     loginWindow = tk.Tk()
     loginWindow.geometry("250x100")
+    loginWindow.minsize(250,100)
+    loginWindow.maxsize(250,100)
     loginWindow.protocol("WM_DELETE_WINDOW", disable_close)
     loginWindow.rowconfigure([0, 1, 2], minsize=1)
     loginWindow.columnconfigure([0, 1], minsize=1)
@@ -45,11 +47,8 @@ def login(event=None):
         loginWindow.destroy()
 
 def testLogin():
-    
-
     userUName = loginWindow.unameText.get()
     userPWord = loginWindow.pwordText.get()
-    
 
     credentialsFile = open("credentials.txt", "r")
 
