@@ -53,7 +53,7 @@ def testLogin():
     credentialsFile = open("credentials.txt", "r")
 
     for line in credentialsFile:
-        line = line.split(":", 2)
+        line = line.split("|", 2)
         knownUName = line[0].replace('\n', '')
         knownPWord = line[1].replace('\n', '')
         if userUName == knownUName and userPWord == knownPWord:
@@ -65,3 +65,4 @@ def testLogin():
     messagebox.showwarning("Invalid Cridentials","Sorry, supplied Username and Password\ndo not match reccords. \n\nTry again")
     return False
     #return true if its good and false if EOF error (iterate over everything)
+    

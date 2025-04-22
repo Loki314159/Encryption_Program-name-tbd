@@ -6,7 +6,13 @@ import LoginScreenLite as ls
 import os
 import math
 
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: clear out global variables so things don't endlessly append
+    Requirement: be called
+    Promise: all variables will be respectively empty
+"""
+# ---------------------------------------------------------------#
 def resetVariables():
     global ciphertext
     global cipherList
@@ -34,8 +40,14 @@ def resetVariables():
     asciiList=list(""" !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n""")
     publicKey=""
     privateKey=""
-resetVariables()
-
+resetVariables() #calling it at start to avoid breaking everything
+# ---------------------------------------------------------------#
+"""
+    Purpose: clear out all the buttons for each encryption method
+    Requirement: be called
+    Promise: all widgets cleared bar method buttons and details button
+"""
+# ---------------------------------------------------------------#
 def forgetAll():
     ciphertextBox.grid_forget()
     ciphertextLabel.grid_forget()
@@ -63,15 +75,27 @@ def forgetAll():
     uidBox.grid_forget()
     uidLabel.grid_forget()
     removeUserButton.grid_forget()
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: make all buttons light blue to allow the focused method be turned dark blue and focused
+    Requirement: be called
+    Promise: all buttons will be turned light blue
+"""
+# ---------------------------------------------------------------#
 def lightBlueButtons():
     trifidButton.config(bg="lightblue", fg="black")
-    caeserButton.config(bg="lightblue", fg="black")
+    caesarButton.config(bg="lightblue", fg="black")
     RSAButton.config(bg="lightblue", fg="black")
     b64Button.config(bg="lightblue", fg="black")
     substitutionButton.config(bg="lightblue", fg="black")
     changeDetailsButton.config(bg="lightblue", fg="black")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Generate RSA keys
+    Requirement: be called while encrypting/decrypting
+    Promise: generate RSA keys if there aren't any currently
+"""
+# ---------------------------------------------------------------#
 def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
         return privateKeyBox.get(), publicKeyBox.get()
@@ -82,7 +106,13 @@ def RSAGenKeys():
     publicKeyBox.insert(0, publicKey)
     return privateKey, publicKey
 
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: set widgets to be for the trifid method
+    Requirement: Trifid button pressed
+    Promise: initialise trifid and common widgets
+"""
+# ---------------------------------------------------------------#
 def trifid():
     print("trifid")
     forgetAll()
@@ -98,14 +128,20 @@ def trifid():
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
-
-def caeser():
+# ---------------------------------------------------------------#
+"""
+    Purpose: set widgets to be for the caesar method
+    Requirement: Caesar button pressed
+    Promise: initialise caesar and common widgets
+"""
+# ---------------------------------------------------------------#
+def caesar():
     forgetAll()
     lightBlueButtons()
-    print("caeser")
-    caeserButton.config(bg="blue", fg="white")
-    decryptButton.config(command=caeserDecrypt)
-    encryptButton.config(command=caeserEncrypt)
+    print("caesar")
+    caesarButton.config(bg="blue", fg="white")
+    decryptButton.config(command=caesarDecrypt)
+    encryptButton.config(command=caesarEncrypt)
     shiftBox.grid(column=1, row=2)
     shiftLabel.grid(column=1, row=2, sticky="nw")
     encryptButton.grid(column=1, row=1, sticky="s")
@@ -114,7 +150,13 @@ def caeser():
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: set widgets to be for the RSA method
+    Requirement: RSA button pressed
+    Promise: initialise RSA and common widgets
+"""
+# ---------------------------------------------------------------#
 def RSA():
     forgetAll()
     lightBlueButtons()
@@ -132,7 +174,13 @@ def RSA():
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: set widgets to be for the base64 method
+    Requirement: base64 button pressed
+    Promise: initialise base64 and common widgets
+"""
+# ---------------------------------------------------------------#
 def base64():
     forgetAll()
     lightBlueButtons()
@@ -146,7 +194,13 @@ def base64():
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: set widgets to be for the substitution method
+    Requirement: Substitution button pressed
+    Promise: initialise substitution and common widgets
+"""
+# ---------------------------------------------------------------#
 def substitution():
     forgetAll()
     lightBlueButtons()
@@ -160,7 +214,13 @@ def substitution():
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: set widgets for user management
+    Requirement: details button pressed
+    Promise: initialise details and common widgets
+"""
+# ---------------------------------------------------------------#
 def changeDetails():
     forgetAll()
     lightBlueButtons()
@@ -178,7 +238,13 @@ def changeDetails():
     newUserButton.grid(column="1", row="4", sticky="n")
     removeUserButton.grid(column="1", row="4", sticky="s")
 
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Encrypt plaintext with trifid method
+    Requirement: Encrypt button be pressed, there is a plaintext to encrypt, key is 125 characters and all characters in the plaintext are also in the key
+    Promise: place encrypted plaintext in ciphertext box
+"""
+# ---------------------------------------------------------------#
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     resetVariables()
     plainList=list(plaintextBox.get())
@@ -198,8 +264,14 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     ciphertext="".join(cipherList)
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
-
-def caeserEncrypt():
+# ---------------------------------------------------------------#
+"""
+    Purpose: Encrypt plaintext with caesar method
+    Requirement: Encrypt button be pressed, there is a plaintext to encrypt, shift is not null
+    Promise: place encrypted plaintext in ciphertext box
+"""
+# ---------------------------------------------------------------#
+def caesarEncrypt():
     resetVariables()
     ciphertext=""
     shift=int(shiftBox.get())
@@ -211,7 +283,13 @@ def caeserEncrypt():
         ciphertext+=asciiList[i%len(asciiList)]
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Encrypt plaintext with RSA method using the public key
+    Requirement: Encrypt button be pressed, there is a plaintext to encrypt
+    Promise: place encrypted plaintext in ciphertext box
+"""
+# ---------------------------------------------------------------#
 def RSAPubEncrypt():
     resetVariables()
     RSAGenKeys()
@@ -227,14 +305,26 @@ def RSAPubEncrypt():
         
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Encrypt plaintext with base 64 method
+    Requirement: Encrypt button be pressed, there is a plaintext to encrypt
+    Promise: place encrypted plaintext in ciphertext box
+"""
+# ---------------------------------------------------------------#
 def base64Encrypt():
     resetVariables()
     plaintext=plaintextBox.get()
     ciphertext=b64.b64encode(plaintext.encode()).decode("ascii")
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Encrypt plaintext with substitution method
+    Requirement: Encrypt button be pressed, there is a plaintext to encrypt
+    Promise: place encrypted plaintext in ciphertext box
+"""
+# ---------------------------------------------------------------#
 def substitutionEncrypt():
     resetVariables()
     ciphertext=""
@@ -246,7 +336,13 @@ def substitutionEncrypt():
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Decrypt ciphertext with trifid method
+    Requirement: Decrypt button be pressed, there is a ciphertext to decrypt, key is the same as the one used to encrypt
+    Promise: place decrypted ciphertext in plaintext box
+"""
+# ---------------------------------------------------------------#
 def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     resetVariables()
     cipherList=list(ciphertextBox.get())
@@ -266,8 +362,14 @@ def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     plaintext="".join(plainList)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
-
-def caeserDecrypt():
+# ---------------------------------------------------------------#
+"""
+    Purpose: Decrypt ciphertext with caesar method
+    Requirement: Decrypt button be pressed, there is a ciphertext to decrypt, shift is the same as the one used to encrypt
+    Promise: place decrypted ciphertext in plaintext box
+"""
+# ---------------------------------------------------------------#
+def caesarDecrypt():
     resetVariables()
     plaintext=""
     shift=int(shiftBox.get())*-1
@@ -279,7 +381,13 @@ def caeserDecrypt():
         plaintext+=asciiList[i%len(asciiList)]
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Decrypt ciphertext with RSA method and the private key
+    Requirement: Decrypt button be pressed, there is a ciphertext to decrypt
+    Promise: place decrypted ciphertext in plaintext box
+"""
+# ---------------------------------------------------------------#
 def RSAPrivDecrypt():
     resetVariables()
     RSAGenKeys()
@@ -294,7 +402,13 @@ def RSAPrivDecrypt():
             plaintext+=rsa.decryptRSA(i, privateKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Decrypt ciphertext with base 64 method
+    Requirement: Decrypt button be pressed, there is a ciphertext to decrypt
+    Promise: place decrypted ciphertext in plaintext box
+"""
+# ---------------------------------------------------------------#
 def base64Decrypt():
     resetVariables()
     ciphertext=ciphertextBox.get()
@@ -302,7 +416,13 @@ def base64Decrypt():
     plaintext=plaintext.decode("ascii")
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Decrypt ciphertext with substitution method
+    Requirement: Decrypt button be pressed, there is a ciphertext to decrypt
+    Promise: place decrypted ciphertext in plaintext box
+"""
+# ---------------------------------------------------------------#
 def substitutionDecrypt():
     resetVariables()
     plaintext=""
@@ -312,7 +432,13 @@ def substitutionDecrypt():
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: changes password of user based on the uid provided
+    Requirement: there is a given uid and has a valid user and the password is not null
+    Promise: change only the password of the user with the given uid
+"""
+# ---------------------------------------------------------------#
 def changePassword():
     print("changepass")
     password=passwordBox.get()
@@ -326,18 +452,23 @@ def changePassword():
     if uid=="":
         return
     for line in credentialsFile:
-        line = line.split(":", 2)
-        print(line)
+        line = line.split("|", 2)
         if uid == line[2].replace('\n', ''):
             line[1] = password
-        newCredentialsFile.write(line[0] + ":" + line[1] + ":" + str(newuid) + "\n")
+        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")
         newuid= int(line[2])+1
     
     newCredentialsFile.close()
     credentialsFile.close()
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: changes username of user based on the uid provided
+    Requirement: there is a given uid and has a valid user and the username is not null
+    Promise: change only the username of the user with the given uid
+"""
+# ---------------------------------------------------------------#
 def changeUsername():
     print("changeuser")
     username=usernameBox.get()
@@ -353,19 +484,25 @@ def changeUsername():
         print("uid")
         return
     for line in credentialsFile:
-        line = line.split(":", 2)
+        line = line.split("|", 2)
         print(line)
         if uid == line[2].replace('\n', ''):
             line[0] = username
             print("heehe")
-        newCredentialsFile.write(line[0] + ":" + line[1] + ":" + str(newuid) + "\n")
+        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")
         newuid= int(line[2])+1
     
     newCredentialsFile.close()
     credentialsFile.close()
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: make new user and automatically assign it a uid
+    Requirement: have a unique username and a not null password
+    Promise: add user with given details to credentials.txt file
+"""
+# ---------------------------------------------------------------#
 def newUser():
     print("newuser")
     password=passwordBox.get()
@@ -379,7 +516,7 @@ def newUser():
         credentialsFile.close()
         return
     for line in credentialsFile:
-        line = line.split(":", 2)
+        line = line.split("|", 2)
         print(line)
         if username == line[0].replace('\n', ''):
             return
@@ -388,9 +525,15 @@ def newUser():
 
     newuid= int(uid)+1
     credentialsFile = open("credentials.txt", "a")
-    credentialsFile.write(username + ":" + password + ":" + str(newuid) + "\n")    
+    credentialsFile.write(username + "|" + password + "|" + str(newuid) + "\n")    
     credentialsFile.close()
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: remove user from credentials.txt file based on uid
+    Requirement: press remove user button
+    Promise: remove user with given uid from credentials.txt and reordering the following users which will change all the uid
+"""
+# ---------------------------------------------------------------#
 def removeuser():
     print("removeuser")
     username=usernameBox.get()
@@ -401,12 +544,12 @@ def removeuser():
     newuid="0"
     replacedUsers=0
     for line in credentialsFile:
-        line = line.split(":", 2)
+        line = line.split("|", 2)
         if uid == line[2].replace('\n', '') or username == line[0].replace("\n", ""):
             newuid= int(line[2])
             replacedUsers+=1
         else:
-            newCredentialsFile.write(line[0] + ":" + line[1] + ":" + str(newuid) + "\n")
+            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")
             
         newuid= int(line[2]) + 1 - replacedUsers
     
@@ -415,14 +558,25 @@ def removeuser():
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
 
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: check if user has valid credentials before initialising program
+    Requirement: submit valid username and password
+    Promise: initialise program
+"""
+# ---------------------------------------------------------------#
 if ls.start():
     window=tk.Tk()
     window.minsize(200, 300)
     window.maxsize(200, 300)
 
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    icon_path = os.path.join(BASE_DIR, 'School_logo_Lake_G.ico')
+    window.iconbitmap(icon_path)
+    window.title("EncryptionProgram")
+
     trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid")
-    caeserButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caeser, text="Caeser")
+    caesarButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caesar, text="Caesar")
     RSAButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= RSA, text="RSA")
     b64Button=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= base64, text="Base 64")
     substitutionButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= substitution, text="Substitution")
@@ -430,7 +584,7 @@ if ls.start():
     changeDetailsButton=tk.Button(height=1, width=4, borderwidth=2, bg="lightblue", command= changeDetails, text="Details")
 
     trifidButton.grid(column=0, row=0, sticky="nsew")
-    caeserButton.grid(column=0, row=1, sticky="nsew")
+    caesarButton.grid(column=0, row=1, sticky="nsew")
     RSAButton.grid(column=0, row=2, sticky="nsew")
     b64Button.grid(column=0, row=3, sticky="nsew")
     substitutionButton.grid(column=0, row=4, sticky="nsew")

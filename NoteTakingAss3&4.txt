@@ -68,3 +68,8 @@ I also might not need the odd delimiter if the rsa output is always the same cha
 22/04/2025
 time to remove the kinda unecessary rsa encryption bits as they dont work and I would need to change to much to get it to work for now, may be revisited later
 messed with gui stuff and made it scale fine and will push this version but I will be revising the changes because I don't like the scaling of the window changing the UI, I think it looks best as one size, if needed this can be changed
+
+forgot to implement finding UID based on username before commenting but that is gonna be a simple button and function so should be fine anyway
+gonna split with pipe (|) so none of thems in username or password, missuse of program at the moment (having pipes in shiz) will break it, I will make error handling for it though
+
+PRPs not quite done but almost done, might just not do much more programming before school goes back and then get feedback before fixing up and polishing off
