@@ -61,3 +61,10 @@ not sure if the output input is correct, will check when physically at pc
 its definitely broken, it just kinda decrypts the first section of the message a bunch
 I was calling ciphertext instead of i in the for loop :D
 it works, praise to the machine gods (there were other solutions but I chose the easiest of just checking that the item being decrypted was not just empty)
+
+all left to do I think I just need to add comments make it pretty and perhaps also clean up code, I think I will just remove priv encrypt and pub decrypt and just deal with not being able to sign messages ig /shrug
+I also might not need the odd delimiter if the rsa output is always the same char length (which I think it is and can just be split)
+
+22/04/2025
+time to remove the kinda unecessary rsa encryption bits as they dont work and I would need to change to much to get it to work for now, may be revisited later
+messed with gui stuff and made it scale fine and will push this version but I will be revising the changes because I don't like the scaling of the window changing the UI, I think it looks best as one size, if needed this can be changed

@@ -45,8 +45,6 @@ def forgetAll():
     decryptButton.grid_forget()
     encryptButton.config(text="Encrypt:")
     decryptButton.config(text="Decrypt:")
-    encryptButton2.grid_forget()
-    decryptButton2.grid_forget()
     keyBox.grid_forget()
     keyLabel.grid_forget()
     shiftBox.grid_forget()
@@ -96,9 +94,9 @@ def trifid():
     keyBox.grid(column=1, row=2)
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
-    ciphertextBox.grid(column=1, row=4, sticky="w")
+    ciphertextBox.grid(column=1, row=4)
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
-    plaintextBox.grid(column=1, row=0, sticky="w")
+    plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
 
 def caeser():
@@ -108,13 +106,13 @@ def caeser():
     caeserButton.config(bg="blue", fg="white")
     decryptButton.config(command=caeserDecrypt)
     encryptButton.config(command=caeserEncrypt)
-    shiftBox.grid(column=1, row=2, sticky="w")
+    shiftBox.grid(column=1, row=2)
     shiftLabel.grid(column=1, row=2, sticky="nw")
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
-    ciphertextBox.grid(column=1, row=4, sticky="w")
+    ciphertextBox.grid(column=1, row=4)
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
-    plaintextBox.grid(column=1, row=0, sticky="w")
+    plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
 
 def RSA():
@@ -122,21 +120,17 @@ def RSA():
     lightBlueButtons()
     print("RSA")
     RSAButton.config(bg="blue", fg="white")
-    decryptButton.config(command=RSAPubDecrypt, text="Pub Decrypt")
+    decryptButton.config(command=RSAPrivDecrypt, text="Priv Decrypt")
     encryptButton.config(command=RSAPubEncrypt, text="Pub Encrypt")
-    decryptButton2.config(command=RSAPrivDecrypt, text="Priv Decrypt")
-    encryptButton2.config(command=RSAPrivEncrypt, text="Priv Encrypt")
-    decryptButton.grid(column=1, row=2, sticky="nw")
-    encryptButton.grid(column=1, row=2, sticky="ne")
-    decryptButton2.grid(column=1, row=2, sticky="sw")
-    encryptButton2.grid(column=1, row=2, sticky="se")
-    publicKeyBox.grid(column=1, row=1, sticky="w")
+    decryptButton.grid(column=1, row=2, sticky="s")
+    encryptButton.grid(column=1, row=2, sticky="n")
+    publicKeyBox.grid(column=1, row=1)
     publicKeyLabel.grid(column=1, row=1, sticky="nw")
-    privateKeyBox.grid(column=1, row=3, sticky="w")
+    privateKeyBox.grid(column=1, row=3)
     privateKeyLabel.grid(column=1, row=3, sticky="nw")
-    ciphertextBox.grid(column=1, row=4, sticky="w")
+    ciphertextBox.grid(column=1, row=4)
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
-    plaintextBox.grid(column=1, row=0, sticky="w")
+    plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
 
 def base64():
@@ -148,9 +142,9 @@ def base64():
     encryptButton.config(command=base64Encrypt)
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
-    ciphertextBox.grid(column=1, row=4, sticky="w")
+    ciphertextBox.grid(column=1, row=4)
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
-    plaintextBox.grid(column=1, row=0, sticky="w")
+    plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
 
 def substitution():
@@ -162,9 +156,9 @@ def substitution():
     encryptButton.config(command=substitutionEncrypt)
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
-    ciphertextBox.grid(column=1, row=4, sticky="w")
+    ciphertextBox.grid(column=1, row=4)
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
-    plaintextBox.grid(column=1, row=0, sticky="w")
+    plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
 
 def changeDetails():
@@ -172,11 +166,11 @@ def changeDetails():
     lightBlueButtons()
     print("changeDetails")
     changeDetailsButton.config(bg="blue", fg="white")
-    usernameBox.grid(column=1, row=0, sticky="w")
+    usernameBox.grid(column=1, row=0)
     usernameLabel.grid(column=1, row=0, sticky="nw")
-    passwordBox.grid(column=1, row=1, sticky="w")
+    passwordBox.grid(column=1, row=1)
     passwordLabel.grid(column=1, row=1, sticky="nw")
-    uidBox.grid(column=1, row=2, sticky="w")
+    uidBox.grid(column=1, row=2)
     uidLabel.grid(column=1, row=2, sticky="nw")
     
     changePasswordButton.grid(column="1", row="3", sticky="n")
@@ -234,15 +228,6 @@ def RSAPubEncrypt():
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
-def RSAPrivEncrypt():
-    resetVariables()
-    RSAGenKeys()
-    plaintext=plaintextBox.get()
-    privateKey=privateKeyBox.get()
-    ciphertext=rsa.encryptRSA(plaintext, privateKey)
-    ciphertextBox.delete(0, tk.END)
-    ciphertextBox.insert(0, ciphertext)
-
 def base64Encrypt():
     resetVariables()
     plaintext=plaintextBox.get()
@@ -292,15 +277,6 @@ def caeserDecrypt():
     plainNumbers = [x+shift for x in cipherNumbers]
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)]
-    plaintextBox.delete(0, tk.END)
-    plaintextBox.insert(0, plaintext)
-
-def RSAPubDecrypt():
-    resetVariables()
-    RSAGenKeys()
-    ciphertext=ciphertextBox.get()
-    publicKey=publicKeyBox.get()
-    plaintext=rsa.decryptRSA(ciphertext, publicKey)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 
@@ -442,8 +418,9 @@ def removeuser():
 
 if ls.start():
     window=tk.Tk()
-    window.columnconfigure([0, 1], minsize=25)
-    window.rowconfigure([0], minsize=10)
+    window.columnconfigure([0, 1], weight=1)
+    window.rowconfigure([0, 1, 2, 3, 4], weight=1)
+    window.minsize(200, 300)
 
     trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid")
     caeserButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caeser, text="Caeser")
@@ -453,11 +430,11 @@ if ls.start():
     
     changeDetailsButton=tk.Button(height=1, width=4, borderwidth=2, bg="lightblue", command= changeDetails, text="Details")
 
-    trifidButton.grid(column=0, row=0)
-    caeserButton.grid(column=0, row=1)
-    RSAButton.grid(column=0, row=2)
-    b64Button.grid(column=0, row=3)
-    substitutionButton.grid(column=0, row=4)
+    trifidButton.grid(column=0, row=0, sticky="nsew")
+    caeserButton.grid(column=0, row=1, sticky="nsew")
+    RSAButton.grid(column=0, row=2, sticky="nsew")
+    b64Button.grid(column=0, row=3, sticky="nsew")
+    substitutionButton.grid(column=0, row=4, sticky="nsew")
     
     changeDetailsButton.grid(column=1, row=0, sticky="ne")
 
@@ -476,8 +453,6 @@ if ls.start():
 
     encryptButton=tk.Button(text="Encrypt", bg="hotpink")
     decryptButton=tk.Button(text="Decrypt", bg="hotpink")
-    encryptButton2=tk.Button(text="Encrypt", bg="hotpink")
-    decryptButton2=tk.Button(text="Decrypt", bg="hotpink")
 
     changePasswordButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changePassword, text="changePassword")
     changeUsernameButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changeUsername, text="changeUsername")
