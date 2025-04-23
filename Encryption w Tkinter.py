@@ -12,6 +12,9 @@ import math
     Requirement: be called
     Promise: all variables will be respectively empty
 """
+"""
+    These global variables are used throughout most of the encryption and decryption functions
+"""
 # ---------------------------------------------------------------#
 def resetVariables():
     global ciphertext
@@ -37,7 +40,7 @@ def resetVariables():
     yCoordinate = []
     zCoordinate = []
     cipherKey=[]
-    asciiList=list(""" !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n""")
+    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
     publicKey=""
     privateKey=""
 resetVariables() #calling it at start to avoid breaking everything
@@ -91,7 +94,7 @@ def lightBlueButtons():
     changeDetailsButton.config(bg="lightblue", fg="black")
 # ---------------------------------------------------------------#
 """
-    Purpose: Generate RSA keys
+    Purpose: Generate RSA keys using RSA.py provided in assessment files
     Requirement: be called while encrypting/decrypting
     Promise: generate RSA keys if there aren't any currently
 """
@@ -246,21 +249,20 @@ def changeDetails():
 """
 # ---------------------------------------------------------------#
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
-    resetVariables()
+    resetVariables() # example key^^^
     plainList=list(plaintextBox.get())
-    keyList=list(keyBox.get().replace("♥","\n"))
-    np.insert(keyList, 1, 125, axis=0)
-    cipherKey=np.reshape(keyList,(5,5,5))
+    keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
+    cipherKey=np.reshape(keyList,(5,5,5))#reshape key into key cube 
     for i in plainList:
         for x in range(5):
             for y in range(5):
                 for z in range(5):
-                    if cipherKey[x][y][z] == i:
+                    if cipherKey[x][y][z] == i: #turn plaintext into coordinates
                         xCoordinate.append(x)
                         yCoordinate.append(y)
                         zCoordinate.append(z)
     for i in range(len(plainList)):
-        cipherList.append(cipherKey[xCoordinate[i]][yCoordinate[i-1]][zCoordinate[i-2]])
+        cipherList.append(cipherKey[xCoordinate[i]][yCoordinate[i-1]][zCoordinate[i-2]]) #shift coordinates and write out the ciphertext
     ciphertext="".join(cipherList)
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
@@ -274,13 +276,13 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
 def caesarEncrypt():
     resetVariables()
     ciphertext=""
-    shift=int(shiftBox.get())
+    shift=int(shiftBox.get()) #grab key and make sure I can do math with it
     plaintext=plaintextBox.get()
     for i in plaintext:
-        plainNumbers.append(asciiList.index(i))
-    cipherNumbers = [x+shift for x in plainNumbers]
+        plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
+    cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
-        ciphertext+=asciiList[i%len(asciiList)]
+        ciphertext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 # ---------------------------------------------------------------#
@@ -296,13 +298,14 @@ def RSAPubEncrypt():
     ciphertext=""
     plaintext=plaintextBox.get()
     publicKey=publicKeyBox.get()
-
-    splitPlaintext = [plaintext[i:i+200] for i in range(0, len(plaintext), 200)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
+    blockSize = 200
+    splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
+    #^ this allows RSA to be performed on text of any length given the valid characters sizes, after testing it broke with 214 bytes of text and not with 213, all valid characters are 1 byte so just chars = bytes and 200 seems fine
     print(splitPlaintext)
     for i in splitPlaintext:
-        ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥"
+        ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts to be able to split it back up out the other end
     print(ciphertext)
-        
+    
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 # ---------------------------------------------------------------#
@@ -315,7 +318,7 @@ def RSAPubEncrypt():
 def base64Encrypt():
     resetVariables()
     plaintext=plaintextBox.get()
-    ciphertext=b64.b64encode(plaintext.encode()).decode("ascii")
+    ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 # ---------------------------------------------------------------#
@@ -330,9 +333,7 @@ def substitutionEncrypt():
     ciphertext=""
     plaintext=plaintextBox.get()
     for i in plaintext:
-        plainList.append(ord(i))
-    for i in plainList:
-        ciphertext+=(str(i) + " ")
+        ciphertext+=(str(ord(i)) + " ") #combine and get all the ascii values for the plaintext 
     ciphertextBox.delete(0, tk.END)
     ciphertextBox.insert(0, ciphertext)
 
@@ -346,19 +347,18 @@ def substitutionEncrypt():
 def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     resetVariables()
     cipherList=list(ciphertextBox.get())
-    keyList=list(keyBox.get().replace("♥","\n"))
-    np.insert(keyList, 1, 125, axis=0)
-    cipherKey=np.reshape(keyList,(5,5,5))
+    keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
+    cipherKey=np.reshape(keyList,(5,5,5)) #reshape key into key cube
     for i in cipherList:
         for x in range(5):
             for y in range(5):
                 for z in range(5):
-                    if cipherKey[x][y][z] == i:
+                    if cipherKey[x][y][z] == i: #turn plaintext into coordinates
                         xCoordinate.append(x)
                         yCoordinate.append(y)
                         zCoordinate.append(z)
     for i in range(len(cipherList)):
-        plainList.append(cipherKey[xCoordinate[i]][yCoordinate[ (i+1) % len(cipherList)]][zCoordinate[ (i+2) % len(cipherList)]])
+        plainList.append(cipherKey[xCoordinate[i]][yCoordinate[ (i+1) % len(cipherList)]][zCoordinate[ (i+2) % len(cipherList)]]) #shift coordinates back and write out the plaintext
     plaintext="".join(plainList)
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
@@ -372,13 +372,13 @@ def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
 def caesarDecrypt():
     resetVariables()
     plaintext=""
-    shift=int(shiftBox.get())*-1
+    shift=int(shiftBox.get())*-1 #grab key and make sure I can do math with it, turning it negative because I am decrypting
     ciphertext=ciphertextBox.get() 
     for i in ciphertext:
-        cipherNumbers.append(asciiList.index(i))
-    plainNumbers = [x+shift for x in cipherNumbers]
+        cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
+    plainNumbers = [x+shift for x in cipherNumbers] #add shift to all characters in plaintext
     for i in plainNumbers:
-        plaintext+=asciiList[i%len(asciiList)]
+        plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 # ---------------------------------------------------------------#
@@ -395,11 +395,11 @@ def RSAPrivDecrypt():
     privateKey=privateKeyBox.get()
     plaintext=""
     
-    cipherList=ciphertext.split("♥♥♥♥♥")
+    cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
     print(cipherList)
     for i in cipherList:
-        if i != "":
-            plaintext+=rsa.decryptRSA(i, privateKey)
+        if i != "": #null part would make it break, this stops that
+            plaintext+=rsa.decryptRSA(i, privateKey) #stitch back all of the pieces together
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 # ---------------------------------------------------------------#
@@ -412,8 +412,7 @@ def RSAPrivDecrypt():
 def base64Decrypt():
     resetVariables()
     ciphertext=ciphertextBox.get()
-    plaintext=b64.b64decode(ciphertext)
-    plaintext=plaintext.decode("ascii")
+    plaintext=b64.b64decode(ciphertext).decode("ascii") #turn ciphertext from base 64
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
 # ---------------------------------------------------------------#
@@ -426,8 +425,8 @@ def base64Decrypt():
 def substitutionDecrypt():
     resetVariables()
     plaintext=""
-    cipherList=ciphertextBox.get().split()
-    for i in cipherList:
+    cipherList=ciphertextBox.get().split() #take apart the list and return the characters for each value
+    for i in cipherList: 
         plaintext+=chr(int(i))
     plaintextBox.delete(0, tk.END)
     plaintextBox.insert(0, plaintext)
@@ -445,18 +444,18 @@ def changePassword():
     uid=uidBox.get()
     
     credentialsFile = open("credentials.txt", "r")
-    newCredentialsFile = open("newcredentials.txt", "a") #append will automatically create file if it doesnt exist already
+    newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
     newuid="0"
     if password=="":
         return
     if uid=="":
         return
     for line in credentialsFile:
-        line = line.split("|", 2)
-        if uid == line[2].replace('\n', ''):
+        line = line.split("|", 2) #the pipe is the seperator that I use in the user/pass/uid file
+        if uid == line[2].replace('\n', ''): #newlines bad >:(, only change the password for the person with specified uid
             line[1] = password
-        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")
-        newuid= int(line[2])+1
+        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n") #put the file back together
+        newuid= int(line[2])+1 #keep the uids incrementing each time but also not break 
     
     newCredentialsFile.close()
     credentialsFile.close()
@@ -475,22 +474,18 @@ def changeUsername():
     uid=uidBox.get()
     
     credentialsFile = open("credentials.txt", "r")
-    newCredentialsFile = open("newcredentials.txt", "a") #append will automatically create file if it doesnt exist already
+    newCredentialsFile = open("newcredentials.txt", "a") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
     newuid="0"
     if username=="":
-        print("uname")
         return
     if uid=="":
-        print("uid")
         return
     for line in credentialsFile:
-        line = line.split("|", 2)
-        print(line)
-        if uid == line[2].replace('\n', ''):
+        line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/uid file
+        if uid == line[2].replace('\n', ''): #newlines bad >:(, only change the username for the person with specified uid
             line[0] = username
-            print("heehe")
-        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")
-        newuid= int(line[2])+1
+        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n") #put the file back together
+        newuid= int(line[2])+1 #keep the uids incrementing each time but also not break 
     
     newCredentialsFile.close()
     credentialsFile.close()
@@ -508,7 +503,7 @@ def newUser():
     password=passwordBox.get()
     username=usernameBox.get()
 
-    credentialsFile = open("credentials.txt", "r")
+    credentialsFile = open("credentials.txt", "r") #make sure the username & password are not null
     if username == "":
         credentialsFile.close()
         return
@@ -518,13 +513,13 @@ def newUser():
     for line in credentialsFile:
         line = line.split("|", 2)
         print(line)
-        if username == line[0].replace('\n', ''):
+        if username == line[0].replace('\n', ''): #if the username is already taken do nothing
             return
         uid=line[2].replace('\n', '')
     credentialsFile.close()
 
     newuid= int(uid)+1
-    credentialsFile = open("credentials.txt", "a")
+    credentialsFile = open("credentials.txt", "a") #now actually write in the new user since its all good
     credentialsFile.write(username + "|" + password + "|" + str(newuid) + "\n")    
     credentialsFile.close()
 # ---------------------------------------------------------------#
@@ -540,18 +535,18 @@ def removeuser():
     uid=uidBox.get()
     
     credentialsFile = open("credentials.txt", "r")
-    newCredentialsFile = open("newcredentials.txt", "a") #append will automatically create file if it doesnt exist already
+    newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
     newuid="0"
     replacedUsers=0
     for line in credentialsFile:
-        line = line.split("|", 2)
-        if uid == line[2].replace('\n', '') or username == line[0].replace("\n", ""):
+        line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/uid file
+        if uid == line[2].replace('\n', '') or username == line[0].replace("\n", ""): #newlines bad >:(, only remove user with specified uid or specified username
             newuid= int(line[2])
             replacedUsers+=1
         else:
-            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")
+            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")#put the file back together
             
-        newuid= int(line[2]) + 1 - replacedUsers
+        newuid= int(line[2]) + 1 - replacedUsers #keep the uids incrementing each time but also not break, now accounting for the users removed, this was the easiest solution I could think of
     
     newCredentialsFile.close()
     credentialsFile.close()
@@ -567,62 +562,61 @@ def removeuser():
 # ---------------------------------------------------------------#
 if ls.start():
     window=tk.Tk()
-    window.minsize(200, 300)
+    window.minsize(200, 300) #I like it at this size, no bigger no smaller imho
     window.maxsize(200, 300)
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    icon_path = os.path.join(BASE_DIR, 'School_logo_Lake_G.ico')
+    icon_path = os.path.join(BASE_DIR, 'School_logo_Lake_G.ico') #Lake G ico for both windows
     window.iconbitmap(icon_path)
-    window.title("EncryptionProgram")
+    window.title("EncryptionProgram") #nice name :D
 
-    trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid")
+    trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid") #all the method buttons
     caesarButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caesar, text="Caesar")
     RSAButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= RSA, text="RSA")
     b64Button=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= base64, text="Base 64")
     substitutionButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= substitution, text="Substitution")
     
-    changeDetailsButton=tk.Button(height=1, width=4, borderwidth=2, bg="lightblue", command= changeDetails, text="Details")
+    changeDetailsButton=tk.Button(height=1, width=4, borderwidth=2, bg="lightblue", command= changeDetails, text="Details") #detail button
 
-    trifidButton.grid(column=0, row=0, sticky="nsew")
+    trifidButton.grid(column=0, row=0, sticky="nsew") #put em there
     caesarButton.grid(column=0, row=1, sticky="nsew")
     RSAButton.grid(column=0, row=2, sticky="nsew")
     b64Button.grid(column=0, row=3, sticky="nsew")
     substitutionButton.grid(column=0, row=4, sticky="nsew")
     
-    changeDetailsButton.grid(column=1, row=0, sticky="ne")
+    changeDetailsButton.grid(column=1, row=0, sticky="ne") #same here
 
     plaintextLabel=tk.Label(text="Plaintext:")
-    plaintextBox=tk.Entry(textvariable="", justify="left")
+    plaintextBox=tk.Entry(textvariable="", justify="left") #plaintext box/label
 
     ciphertextLabel=tk.Label(text="Ciphertext:")
-    ciphertextBox=tk.Entry(textvariable="", justify="left")
+    ciphertextBox=tk.Entry(textvariable="", justify="left") #ciphertext box/label
 
-    usernameBox=tk.Entry(textvariable="", justify="left")
+    usernameBox=tk.Entry(textvariable="", justify="left") #username/password/uid boxes and labels
     passwordBox=tk.Entry(textvariable="", justify="left")
     uidBox=tk.Entry(textvariable="", justify="left")
     usernameLabel=tk.Label(text="Username:")
     passwordLabel=tk.Label(text="Password:")
     uidLabel=tk.Label(text="UID:")
 
-    encryptButton=tk.Button(text="Encrypt", bg="hotpink")
+    encryptButton=tk.Button(text="Encrypt", bg="hotpink") #enc/dec buttons
     decryptButton=tk.Button(text="Decrypt", bg="hotpink")
 
-    changePasswordButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changePassword, text="changePassword")
+    changePasswordButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changePassword, text="changePassword") #buttons that call their namesake function
     changeUsernameButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changeUsername, text="changeUsername")
     newUserButton=tk.Button(height=1, width=6, borderwidth=2, bg="lightblue", command= newUser, text="newUser")
     removeUserButton=tk.Button(height=1, width=10, borderwidth=2, bg="lightblue", command= removeuser, text="removeuser")
 
-    keyBox=tk.Entry(textvariable="")
+    keyBox=tk.Entry(textvariable="") #trifid key box/label, independant because that way it is kept when using other methods
     keyLabel=tk.Label(text="Key:")
 
-    shiftBox=tk.Entry(textvariable="")
+    shiftBox=tk.Entry(textvariable="") #caesar shift
     shiftLabel=tk.Label(text="Shift:")
 
     privateKeyBox=tk.Entry(textvariable="")
-    privateKeyLabel=tk.Label(text="Private Key:")
+    privateKeyLabel=tk.Label(text="Private Key:") #priv/pub key
 
     publicKeyBox=tk.Entry(textvariable="")
     publicKeyLabel=tk.Label(text="Public Key:")
-
 
     window.mainloop()

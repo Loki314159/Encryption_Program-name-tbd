@@ -73,3 +73,7 @@ forgot to implement finding UID based on username before commenting but that is 
 gonna split with pipe (|) so none of thems in username or password, missuse of program at the moment (having pipes in shiz) will break it, I will make error handling for it though
 
 PRPs not quite done but almost done, might just not do much more programming before school goes back and then get feedback before fixing up and polishing off
+
+23/04/2025
+Some small changes to code where I saw issues or bits I hadn't yet fixed up, still yet to remove all the printing stuff that has existed forever but I am not bothered right now
+fully commented now, will check in to see if bits need further clarification at some point
