@@ -77,3 +77,11 @@ PRPs not quite done but almost done, might just not do much more programming bef
 23/04/2025
 Some small changes to code where I saw issues or bits I hadn't yet fixed up, still yet to remove all the printing stuff that has existed forever but I am not bothered right now
 fully commented now, will check in to see if bits need further clarification at some point
+
+
+30/04/2025
+need to make enter place in a newling character and have more visible giu, probably have a scrollbar both vertical and horizontal and make the general UI bigger, larger fonts on buttons and larger buttons etc then maybe same font size for the actual textboxes
+making some stuff that makes the window size a variable and all the other sizes are based relative to that
+gotta move labels, make text boxes bigger, RSA key ones can stay small and I can expect pasting and copying from them imho
+making all the entry boxes text broke everything :D, but I can now see the multiline inputs properly
+I fixed it about 5min later, had some broken bits that failed silently

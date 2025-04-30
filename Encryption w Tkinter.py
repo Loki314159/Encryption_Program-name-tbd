@@ -4,7 +4,6 @@ import base64 as b64
 import RSA as rsa
 import LoginScreenLite as ls
 import os
-import math
 
 # ---------------------------------------------------------------#
 """
@@ -103,10 +102,10 @@ def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
         return privateKeyBox.get(), publicKeyBox.get()
     privateKey, publicKey = rsa.makeRSAKey()
-    privateKeyBox.delete(0, tk.END)
-    privateKeyBox.insert(0, privateKey)
-    publicKeyBox.delete(0, tk.END)
-    publicKeyBox.insert(0, publicKey)
+    privateKeyBox.delete("1.0", tk.END)
+    privateKeyBox.insert("1.0", privateKey)
+    publicKeyBox.delete("1.0", tk.END)
+    publicKeyBox.insert("1.0", publicKey)
     return privateKey, publicKey
 
 # ---------------------------------------------------------------#
@@ -250,7 +249,7 @@ def changeDetails():
 # ---------------------------------------------------------------#
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     resetVariables() # example key^^^
-    plainList=list(plaintextBox.get())
+    plainList=list(plaintextBox.get("1.0", tk.END).strip())
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5))#reshape key into key cube 
     for i in plainList:
@@ -264,8 +263,8 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     for i in range(len(plainList)):
         cipherList.append(cipherKey[xCoordinate[i]][yCoordinate[i-1]][zCoordinate[i-2]]) #shift coordinates and write out the ciphertext
     ciphertext="".join(cipherList)
-    ciphertextBox.delete(0, tk.END)
-    ciphertextBox.insert(0, ciphertext)
+    ciphertextBox.delete("1.0", tk.END)
+    ciphertextBox.insert("1.0", ciphertext)
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with caesar method
@@ -277,14 +276,14 @@ def caesarEncrypt():
     resetVariables()
     ciphertext=""
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
-    plaintext=plaintextBox.get()
+    plaintext=plaintextBox.get("1.0", tk.END).strip()
     for i in plaintext:
         plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
         ciphertext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
-    ciphertextBox.delete(0, tk.END)
-    ciphertextBox.insert(0, ciphertext)
+    ciphertextBox.delete("1.0", tk.END)
+    ciphertextBox.insert("1.0", ciphertext)
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with RSA method using the public key
@@ -306,8 +305,8 @@ def RSAPubEncrypt():
         ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts to be able to split it back up out the other end
     print(ciphertext)
     
-    ciphertextBox.delete(0, tk.END)
-    ciphertextBox.insert(0, ciphertext)
+    ciphertextBox.delete("1.0", tk.END)
+    ciphertextBox.insert("1.0", ciphertext)
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with base 64 method
@@ -317,10 +316,10 @@ def RSAPubEncrypt():
 # ---------------------------------------------------------------#
 def base64Encrypt():
     resetVariables()
-    plaintext=plaintextBox.get()
+    plaintext=plaintextBox.get("1.0", tk.END).strip()
     ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
-    ciphertextBox.delete(0, tk.END)
-    ciphertextBox.insert(0, ciphertext)
+    ciphertextBox.delete("1.0", tk.END)
+    ciphertextBox.insert("1.0", ciphertext)
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with substitution method
@@ -331,11 +330,11 @@ def base64Encrypt():
 def substitutionEncrypt():
     resetVariables()
     ciphertext=""
-    plaintext=plaintextBox.get()
+    plaintext=plaintextBox.get("1.0", tk.END).strip()
     for i in plaintext:
         ciphertext+=(str(ord(i)) + " ") #combine and get all the ascii values for the plaintext 
-    ciphertextBox.delete(0, tk.END)
-    ciphertextBox.insert(0, ciphertext)
+    ciphertextBox.delete("1.0", tk.END)
+    ciphertextBox.insert("1.0", ciphertext)
 
 # ---------------------------------------------------------------#
 """
@@ -346,7 +345,7 @@ def substitutionEncrypt():
 # ---------------------------------------------------------------#
 def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     resetVariables()
-    cipherList=list(ciphertextBox.get())
+    cipherList=list(ciphertextBox.get("1.0", tk.END).strip())
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5)) #reshape key into key cube
     for i in cipherList:
@@ -360,8 +359,8 @@ def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     for i in range(len(cipherList)):
         plainList.append(cipherKey[xCoordinate[i]][yCoordinate[ (i+1) % len(cipherList)]][zCoordinate[ (i+2) % len(cipherList)]]) #shift coordinates back and write out the plaintext
     plaintext="".join(plainList)
-    plaintextBox.delete(0, tk.END)
-    plaintextBox.insert(0, plaintext)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
 # ---------------------------------------------------------------#
 """
     Purpose: Decrypt ciphertext with caesar method
@@ -373,14 +372,14 @@ def caesarDecrypt():
     resetVariables()
     plaintext=""
     shift=int(shiftBox.get())*-1 #grab key and make sure I can do math with it, turning it negative because I am decrypting
-    ciphertext=ciphertextBox.get() 
+    ciphertext=ciphertextBox.get("1.0", tk.END).strip() 
     for i in ciphertext:
         cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
     plainNumbers = [x+shift for x in cipherNumbers] #add shift to all characters in plaintext
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
-    plaintextBox.delete(0, tk.END)
-    plaintextBox.insert(0, plaintext)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
 # ---------------------------------------------------------------#
 """
     Purpose: Decrypt ciphertext with RSA method and the private key
@@ -400,8 +399,8 @@ def RSAPrivDecrypt():
     for i in cipherList:
         if i != "": #null part would make it break, this stops that
             plaintext+=rsa.decryptRSA(i, privateKey) #stitch back all of the pieces together
-    plaintextBox.delete(0, tk.END)
-    plaintextBox.insert(0, plaintext)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
 # ---------------------------------------------------------------#
 """
     Purpose: Decrypt ciphertext with base 64 method
@@ -411,10 +410,10 @@ def RSAPrivDecrypt():
 # ---------------------------------------------------------------#
 def base64Decrypt():
     resetVariables()
-    ciphertext=ciphertextBox.get()
+    ciphertext=ciphertextBox.get("1.0", tk.END).strip()
     plaintext=b64.b64decode(ciphertext).decode("ascii") #turn ciphertext from base 64
-    plaintextBox.delete(0, tk.END)
-    plaintextBox.insert(0, plaintext)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
 # ---------------------------------------------------------------#
 """
     Purpose: Decrypt ciphertext with substitution method
@@ -425,11 +424,11 @@ def base64Decrypt():
 def substitutionDecrypt():
     resetVariables()
     plaintext=""
-    cipherList=ciphertextBox.get().split() #take apart the list and return the characters for each value
+    cipherList=ciphertextBox.get("1.0", tk.END).strip().split() #take apart the list and return the characters for each value
     for i in cipherList: 
         plaintext+=chr(int(i))
-    plaintextBox.delete(0, tk.END)
-    plaintextBox.insert(0, plaintext)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
 
 # ---------------------------------------------------------------#
 """
@@ -562,21 +561,24 @@ def removeuser():
 # ---------------------------------------------------------------#
 if ls.start():
     window=tk.Tk()
-    window.minsize(200, 300) #I like it at this size, no bigger no smaller imho
-    window.maxsize(200, 300)
+    windowsize=550
+    window.rowconfigure(index=[0, 1, 2, 3, 4], minsize=int(windowsize/5))
+    window.columnconfigure(index=0, minsize=int(windowsize/5))
+    window.minsize(int((2/3)*windowsize), windowsize)
+    #window.maxsize(int((2/3)*windowsize), windowsize)
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(BASE_DIR, 'School_logo_Lake_G.ico') #Lake G ico for both windows
     window.iconbitmap(icon_path)
     window.title("EncryptionProgram") #nice name :D
-
-    trifidButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= trifid, text="Trifid") #all the method buttons
-    caesarButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= caesar, text="Caesar")
-    RSAButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= RSA, text="RSA")
-    b64Button=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= base64, text="Base 64")
-    substitutionButton=tk.Button(height=3, width=9, borderwidth=4, bg="lightblue", command= substitution, text="Substitution")
+    Frame1=tk.Frame(window)
+    trifidButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= trifid, text="Trifid") #all the method buttons
+    caesarButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= caesar, text="Caesar")
+    RSAButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= RSA, text="RSA")
+    b64Button=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= base64, text="Base 64")
+    substitutionButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= substitution, text="Substitution")
     
-    changeDetailsButton=tk.Button(height=1, width=4, borderwidth=2, bg="lightblue", command= changeDetails, text="Details") #detail button
+    changeDetailsButton=tk.Button(height=int(windowsize/300), width=int(windowsize/75), borderwidth=int(windowsize/150), bg="lightblue", command= changeDetails, text="Details") #detail button
 
     trifidButton.grid(column=0, row=0, sticky="nsew") #put em there
     caesarButton.grid(column=0, row=1, sticky="nsew")
@@ -587,10 +589,10 @@ if ls.start():
     changeDetailsButton.grid(column=1, row=0, sticky="ne") #same here
 
     plaintextLabel=tk.Label(text="Plaintext:")
-    plaintextBox=tk.Entry(textvariable="", justify="left") #plaintext box/label
+    plaintextBox=tk.Text(height=3) #plaintext box/label
 
     ciphertextLabel=tk.Label(text="Ciphertext:")
-    ciphertextBox=tk.Entry(textvariable="", justify="left") #ciphertext box/label
+    ciphertextBox=tk.Text(height=3) #ciphertext box/label
 
     usernameBox=tk.Entry(textvariable="", justify="left") #username/password/uid boxes and labels
     passwordBox=tk.Entry(textvariable="", justify="left")
@@ -602,21 +604,21 @@ if ls.start():
     encryptButton=tk.Button(text="Encrypt", bg="hotpink") #enc/dec buttons
     decryptButton=tk.Button(text="Decrypt", bg="hotpink")
 
-    changePasswordButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changePassword, text="changePassword") #buttons that call their namesake function
-    changeUsernameButton=tk.Button(height=1, width=12, borderwidth=2, bg="lightblue", command= changeUsername, text="changeUsername")
-    newUserButton=tk.Button(height=1, width=6, borderwidth=2, bg="lightblue", command= newUser, text="newUser")
-    removeUserButton=tk.Button(height=1, width=10, borderwidth=2, bg="lightblue", command= removeuser, text="removeuser")
+    changePasswordButton=tk.Button(height=int(windowsize/300), width=int(windowsize/25), borderwidth=int(windowsize/150), bg="lightblue", command= changePassword, text="changePassword") #buttons that call their namesake function
+    changeUsernameButton=tk.Button(height=int(windowsize/300), width=int(windowsize/25), borderwidth=int(windowsize/150), bg="lightblue", command= changeUsername, text="changeUsername")
+    newUserButton=tk.Button(height=int(windowsize/300), width=int(windowsize/50), borderwidth=int(windowsize/150), bg="lightblue", command= newUser, text="newUser")
+    removeUserButton=tk.Button(height=int(windowsize/300), width=int(windowsize/30), borderwidth=int(windowsize/150), bg="lightblue", command= removeuser, text="removeuser")
 
-    keyBox=tk.Entry(textvariable="") #trifid key box/label, independant because that way it is kept when using other methods
+    keyBox=tk.Entry(textvariable="", justify="left") #trifid key box/label, independant because that way it is kept when using other methods
     keyLabel=tk.Label(text="Key:")
 
-    shiftBox=tk.Entry(textvariable="") #caesar shift
+    shiftBox=tk.Entry(textvariable="", justify="left") #caesar shift
     shiftLabel=tk.Label(text="Shift:")
 
-    privateKeyBox=tk.Entry(textvariable="")
+    privateKeyBox=tk.Entry(textvariable="", justify="left")
     privateKeyLabel=tk.Label(text="Private Key:") #priv/pub key
 
-    publicKeyBox=tk.Entry(textvariable="")
+    publicKeyBox=tk.Entry(textvariable="", justify="left")
     publicKeyLabel=tk.Label(text="Public Key:")
 
     window.mainloop()
