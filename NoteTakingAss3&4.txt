@@ -85,3 +85,7 @@ making some stuff that makes the window size a variable and all the other sizes 
 gotta move labels, make text boxes bigger, RSA key ones can stay small and I can expect pasting and copying from them imho
 making all the entry boxes text broke everything :D, but I can now see the multiline inputs properly
 I fixed it about 5min later, had some broken bits that failed silently
+
+31/04/2025
+Gotta fix all the extra newlines existing because of it now being a textbox rather than entry :sob:
+will make a function for this

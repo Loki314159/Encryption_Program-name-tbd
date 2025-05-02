@@ -102,11 +102,17 @@ def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
         return privateKeyBox.get(), publicKeyBox.get()
     privateKey, publicKey = rsa.makeRSAKey()
-    privateKeyBox.delete("1.0", tk.END)
-    privateKeyBox.insert("1.0", privateKey)
-    publicKeyBox.delete("1.0", tk.END)
-    publicKeyBox.insert("1.0", publicKey)
+    privateKeyBox.delete(0, tk.END)
+    privateKeyBox.insert(0, privateKey)
+    publicKeyBox.delete(0, tk.END)
+    publicKeyBox.insert(0, publicKey)
     return privateKey, publicKey
+
+def Textboxformatter(text):
+    alteredTextList=list(text)
+    alteredTextList.pop(-1)
+    alteredText="".join(alteredTextList)
+    return alteredText
 
 # ---------------------------------------------------------------#
 """
@@ -123,7 +129,7 @@ def trifid():
     decryptButton.config(command=trifidDecrypt)
     encryptButton.config(command=trifidEncrypt)
     keyLabel.grid(column=1, row=2, sticky="nw")
-    keyBox.grid(column=1, row=2)
+    keyBox.grid(column=1, row=2, sticky="we")
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
     ciphertextBox.grid(column=1, row=4)
@@ -249,7 +255,7 @@ def changeDetails():
 # ---------------------------------------------------------------#
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     resetVariables() # example key^^^
-    plainList=list(plaintextBox.get("1.0", tk.END).strip())
+    plainList=list(Textboxformatter(plaintextBox.get("1.0", tk.END)))
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5))#reshape key into key cube 
     for i in plainList:
@@ -276,7 +282,7 @@ def caesarEncrypt():
     resetVariables()
     ciphertext=""
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
-    plaintext=plaintextBox.get("1.0", tk.END).strip()
+    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     for i in plaintext:
         plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
@@ -295,7 +301,7 @@ def RSAPubEncrypt():
     resetVariables()
     RSAGenKeys()
     ciphertext=""
-    plaintext=plaintextBox.get()
+    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     publicKey=publicKeyBox.get()
     blockSize = 200
     splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
@@ -316,7 +322,7 @@ def RSAPubEncrypt():
 # ---------------------------------------------------------------#
 def base64Encrypt():
     resetVariables()
-    plaintext=plaintextBox.get("1.0", tk.END).strip()
+    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
     ciphertextBox.delete("1.0", tk.END)
     ciphertextBox.insert("1.0", ciphertext)
@@ -330,7 +336,7 @@ def base64Encrypt():
 def substitutionEncrypt():
     resetVariables()
     ciphertext=""
-    plaintext=plaintextBox.get("1.0", tk.END).strip()
+    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     for i in plaintext:
         ciphertext+=(str(ord(i)) + " ") #combine and get all the ascii values for the plaintext 
     ciphertextBox.delete("1.0", tk.END)
@@ -345,7 +351,7 @@ def substitutionEncrypt():
 # ---------------------------------------------------------------#
 def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     resetVariables()
-    cipherList=list(ciphertextBox.get("1.0", tk.END).strip())
+    cipherList=list(Textboxformatter(ciphertextBox.get("1.0", tk.END)))
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5)) #reshape key into key cube
     for i in cipherList:
@@ -372,7 +378,7 @@ def caesarDecrypt():
     resetVariables()
     plaintext=""
     shift=int(shiftBox.get())*-1 #grab key and make sure I can do math with it, turning it negative because I am decrypting
-    ciphertext=ciphertextBox.get("1.0", tk.END).strip() 
+    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END)) 
     for i in ciphertext:
         cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
     plainNumbers = [x+shift for x in cipherNumbers] #add shift to all characters in plaintext
@@ -390,7 +396,7 @@ def caesarDecrypt():
 def RSAPrivDecrypt():
     resetVariables()
     RSAGenKeys()
-    ciphertext=ciphertextBox.get()
+    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
     privateKey=privateKeyBox.get()
     plaintext=""
     
@@ -410,7 +416,7 @@ def RSAPrivDecrypt():
 # ---------------------------------------------------------------#
 def base64Decrypt():
     resetVariables()
-    ciphertext=ciphertextBox.get("1.0", tk.END).strip()
+    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
     plaintext=b64.b64decode(ciphertext).decode("ascii") #turn ciphertext from base 64
     plaintextBox.delete("1.0", tk.END)
     plaintextBox.insert("1.0", plaintext)
@@ -424,7 +430,7 @@ def base64Decrypt():
 def substitutionDecrypt():
     resetVariables()
     plaintext=""
-    cipherList=ciphertextBox.get("1.0", tk.END).strip().split() #take apart the list and return the characters for each value
+    cipherList=Textboxformatter(ciphertextBox.get("1.0", tk.END)).split() #take apart the list and return the characters for each value
     for i in cipherList: 
         plaintext+=chr(int(i))
     plaintextBox.delete("1.0", tk.END)
