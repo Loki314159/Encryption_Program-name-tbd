@@ -89,3 +89,9 @@ I fixed it about 5min later, had some broken bits that failed silently
 31/04/2025
 Gotta fix all the extra newlines existing because of it now being a textbox rather than entry :sob:
 will make a function for this
+
+2/05/2025
+Talked to James about changing the loginscreen that I may have changed on the 16th of April
+
+3/05/2025
+wrote in some comments at points specified to me by some classmates that they felt needed more clarification due to not understanding

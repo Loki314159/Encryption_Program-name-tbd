@@ -102,16 +102,22 @@ def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
         return privateKeyBox.get(), publicKeyBox.get()
     privateKey, publicKey = rsa.makeRSAKey()
-    privateKeyBox.delete(0, tk.END)
-    privateKeyBox.insert(0, privateKey)
+    privateKeyBox.delete(0, tk.END)# this will delete everything in the Entry box from the start (0) to the end (tk.END)
+    privateKeyBox.insert(0, privateKey)# this will place the privateKey in the privatekeybox at the start (0)
     publicKeyBox.delete(0, tk.END)
     publicKeyBox.insert(0, publicKey)
-    return privateKey, publicKey
-
+    return privateKey, publicKey # returns both keys to the operation that called the function
+# ---------------------------------------------------------------#
+"""
+    Purpose: Remove the newline character at the end of an input parsed through a Text widget, this is not needed for user inputs from Entry widgets
+    Requirement: be called after parsing input from an Entry widget
+    Promise: remove the unnecessary (sometimes problematic) newline character from inputs
+"""
+# ---------------------------------------------------------------#
 def Textboxformatter(text):
-    alteredTextList=list(text)
-    alteredTextList.pop(-1)
-    alteredText="".join(alteredTextList)
+    alteredTextList=list(text) # turn the test into a list
+    alteredTextList.pop(-1) # remove the final character (which will always be a newline)
+    alteredText="".join(alteredTextList) # put the list back into being a string
     return alteredText
 
 # ---------------------------------------------------------------#
@@ -127,12 +133,12 @@ def trifid():
     lightBlueButtons()
     trifidButton.config(bg="blue", fg="white")
     decryptButton.config(command=trifidDecrypt)
-    encryptButton.config(command=trifidEncrypt)
+    encryptButton.config(command=trifidEncrypt)# changes the configuration of the button so that it calls the specified command
     keyLabel.grid(column=1, row=2, sticky="nw")
     keyBox.grid(column=1, row=2, sticky="we")
-    encryptButton.grid(column=1, row=1, sticky="s")
+    encryptButton.grid(column=1, row=1, sticky="s") # places the widget in the specified column and row where it will be alligned to the cardinal direction specified
     decryptButton.grid(column=1, row=3, sticky="n")
-    ciphertextBox.grid(column=1, row=4)
+    ciphertextBox.grid(column=1, row=4) # due to lack of sticky it will be in the centre
     ciphertextLabel.grid(column=1, row=4, sticky="nw")
     plaintextBox.grid(column=1, row=0)
     plaintextLabel.grid(column=1, row=0, sticky="nw")
@@ -255,7 +261,7 @@ def changeDetails():
 # ---------------------------------------------------------------#
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     resetVariables() # example key^^^
-    plainList=list(Textboxformatter(plaintextBox.get("1.0", tk.END)))
+    plainList=list(Textboxformatter(plaintextBox.get("1.0", tk.END))) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5))#reshape key into key cube 
     for i in plainList:
@@ -269,8 +275,8 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     for i in range(len(plainList)):
         cipherList.append(cipherKey[xCoordinate[i]][yCoordinate[i-1]][zCoordinate[i-2]]) #shift coordinates and write out the ciphertext
     ciphertext="".join(cipherList)
-    ciphertextBox.delete("1.0", tk.END)
-    ciphertextBox.insert("1.0", ciphertext)
+    ciphertextBox.delete("1.0", tk.END) # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
+    ciphertextBox.insert("1.0", ciphertext) # similar difference here, just inserts ciphertext
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with caesar method
@@ -287,7 +293,7 @@ def caesarEncrypt():
         plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
-        ciphertext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
+        ciphertext+=asciiList[i%len(asciiList)] #swaps out the numbers for their respective character found in the asciilist (the mod operator prevents out of bound requests)
     ciphertextBox.delete("1.0", tk.END)
     ciphertextBox.insert("1.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -303,13 +309,11 @@ def RSAPubEncrypt():
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     publicKey=publicKeyBox.get()
-    blockSize = 200
+    blockSize = 200 # specifies how large a text can be in characters before it will be split into another chunk
     splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
     #^ this allows RSA to be performed on text of any length given the valid characters sizes, after testing it broke with 214 bytes of text and not with 213, all valid characters are 1 byte so just chars = bytes and 200 seems fine
-    print(splitPlaintext)
     for i in splitPlaintext:
-        ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts to be able to split it back up out the other end
-    print(ciphertext)
+        ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts as a delineator because it will not appear in encrypted RSA ever
     
     ciphertextBox.delete("1.0", tk.END)
     ciphertextBox.insert("1.0", ciphertext)
@@ -430,7 +434,7 @@ def base64Decrypt():
 def substitutionDecrypt():
     resetVariables()
     plaintext=""
-    cipherList=Textboxformatter(ciphertextBox.get("1.0", tk.END)).split() #take apart the list and return the characters for each value
+    cipherList=Textboxformatter(ciphertextBox.get("1.0", tk.END)) #take apart the list and return the characters for each value
     for i in cipherList: 
         plaintext+=chr(int(i))
     plaintextBox.delete("1.0", tk.END)
@@ -446,12 +450,12 @@ def substitutionDecrypt():
 def changePassword():
     print("changepass")
     password=passwordBox.get()
-    uid=uidBox.get()
+    uid=uidBox.get()# simple get function from Entry boxes, takes in whatever was the user input into the uid box
     
     credentialsFile = open("credentials.txt", "r")
     newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
     newuid="0"
-    if password=="":
+    if password=="":#verify the user input was not null for password or uid (it would be bad to have a null password and no user specified means it is an unnecessary operation)
         return
     if uid=="":
         return
@@ -464,8 +468,8 @@ def changePassword():
     
     newCredentialsFile.close()
     credentialsFile.close()
-    os.remove("credentials.txt")
-    os.rename("newcredentials.txt", "credentials.txt")
+    os.remove("credentials.txt")# removes the file credentials txt to free up the name
+    os.rename("newcredentials.txt", "credentials.txt")# renames the newly written credentials file to the original name
 # ---------------------------------------------------------------#
 """
     Purpose: changes username of user based on the uid provided
@@ -481,7 +485,7 @@ def changeUsername():
     credentialsFile = open("credentials.txt", "r")
     newCredentialsFile = open("newcredentials.txt", "a") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
     newuid="0"
-    if username=="":
+    if username=="": 
         return
     if uid=="":
         return
@@ -567,38 +571,35 @@ def removeuser():
 # ---------------------------------------------------------------#
 if ls.start():
     window=tk.Tk()
-    windowsize=550
-    window.rowconfigure(index=[0, 1, 2, 3, 4], minsize=int(windowsize/5))
-    window.columnconfigure(index=0, minsize=int(windowsize/5))
-    window.minsize(int((2/3)*windowsize), windowsize)
-    #window.maxsize(int((2/3)*windowsize), windowsize)
+    window.rowconfigure(index=[0, 1, 2, 3, 4], minsize=110)
+    window.columnconfigure(index=0, minsize=110)
+    window.minsize(366, 550)
+    #window.maxsize(366, 550)
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(BASE_DIR, 'School_logo_Lake_G.ico') #Lake G ico for both windows
     window.iconbitmap(icon_path)
     window.title("EncryptionProgram") #nice name :D
     Frame1=tk.Frame(window)
-    trifidButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= trifid, text="Trifid") #all the method buttons
-    caesarButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= caesar, text="Caesar")
-    RSAButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= RSA, text="RSA")
-    b64Button=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= base64, text="Base 64")
-    substitutionButton=tk.Button(borderwidth=int(windowsize/75), bg="lightblue", command= substitution, text="Substitution")
+    trifidButton=tk.Button(borderwidth=7, bg="lightblue", command= trifid, text="Trifid") #all the method buttons
+    caesarButton=tk.Button(borderwidth=7, bg="lightblue", command= caesar, text="Caesar")
+    RSAButton=tk.Button(borderwidth=7, bg="lightblue", command= RSA, text="RSA")
+    b64Button=tk.Button(borderwidth=7, bg="lightblue", command= base64, text="Base 64")
+    substitutionButton=tk.Button(borderwidth=7, bg="lightblue", command= substitution, text="Substitution")
     
-    changeDetailsButton=tk.Button(height=int(windowsize/300), width=int(windowsize/75), borderwidth=int(windowsize/150), bg="lightblue", command= changeDetails, text="Details") #detail button
+    changeDetailsButton=tk.Button(height=1, width=7, borderwidth=3, bg="lightblue", command= changeDetails, text="Details") #detail button
 
-    trifidButton.grid(column=0, row=0, sticky="nsew") #put em there
+    trifidButton.grid(column=0, row=0, sticky="nsew") # unlike a lot of the other widgets, we always want these ones visible and accessible so they are put into the window at the start
     caesarButton.grid(column=0, row=1, sticky="nsew")
     RSAButton.grid(column=0, row=2, sticky="nsew")
     b64Button.grid(column=0, row=3, sticky="nsew")
     substitutionButton.grid(column=0, row=4, sticky="nsew")
-    
-    changeDetailsButton.grid(column=1, row=0, sticky="ne") #same here
+    changeDetailsButton.grid(column=1, row=0, sticky="ne")
 
     plaintextLabel=tk.Label(text="Plaintext:")
-    plaintextBox=tk.Text(height=3) #plaintext box/label
-
+    plaintextBox=tk.Text(height=3) # the plaintext and cipihertext fields need to be Text to allow multiline messages to be easily visible for the end user
     ciphertextLabel=tk.Label(text="Ciphertext:")
-    ciphertextBox=tk.Text(height=3) #ciphertext box/label
+    ciphertextBox=tk.Text(height=3)
 
     usernameBox=tk.Entry(textvariable="", justify="left") #username/password/uid boxes and labels
     passwordBox=tk.Entry(textvariable="", justify="left")
@@ -610,10 +611,10 @@ if ls.start():
     encryptButton=tk.Button(text="Encrypt", bg="hotpink") #enc/dec buttons
     decryptButton=tk.Button(text="Decrypt", bg="hotpink")
 
-    changePasswordButton=tk.Button(height=int(windowsize/300), width=int(windowsize/25), borderwidth=int(windowsize/150), bg="lightblue", command= changePassword, text="changePassword") #buttons that call their namesake function
-    changeUsernameButton=tk.Button(height=int(windowsize/300), width=int(windowsize/25), borderwidth=int(windowsize/150), bg="lightblue", command= changeUsername, text="changeUsername")
-    newUserButton=tk.Button(height=int(windowsize/300), width=int(windowsize/50), borderwidth=int(windowsize/150), bg="lightblue", command= newUser, text="newUser")
-    removeUserButton=tk.Button(height=int(windowsize/300), width=int(windowsize/30), borderwidth=int(windowsize/150), bg="lightblue", command= removeuser, text="removeuser")
+    changePasswordButton=tk.Button(height=1, width=22, borderwidth=3, bg="lightblue", command= changePassword, text="changePassword") #buttons that call their namesake function
+    changeUsernameButton=tk.Button(height=1, width=22, borderwidth=3, bg="lightblue", command= changeUsername, text="changeUsername")# everything other than the command is cosmetic
+    newUserButton=tk.Button(height=1, width=11, borderwidth=3, bg="lightblue", command= newUser, text="newUser")
+    removeUserButton=tk.Button(height=1, width=18, borderwidth=3, bg="lightblue", command= removeuser, text="removeuser")
 
     keyBox=tk.Entry(textvariable="", justify="left") #trifid key box/label, independant because that way it is kept when using other methods
     keyLabel=tk.Label(text="Key:")

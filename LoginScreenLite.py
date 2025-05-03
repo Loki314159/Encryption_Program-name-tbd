@@ -48,13 +48,13 @@ def login(event=None):
 
 def testLogin():
     userUName = loginWindow.unameText.get()
-    userPWord = loginWindow.pwordText.get()
+    userPWord = loginWindow.pwordText.get()# get the value from the entry box
 
     credentialsFile = open("credentials.txt", "r")
 
     for line in credentialsFile:
-        line = line.split("|", 2)
-        knownUName = line[0].replace('\n', '')
+        line = line.split("|", 2)# the formatting oof the credentials file is username|password|uid therefore the seperation will allow each value to be interacted with independently
+        knownUName = line[0].replace('\n', '')# there should not me newline characters
         knownPWord = line[1].replace('\n', '')
         if userUName == knownUName and userPWord == knownPWord:
             credentialsFile.close() #Not sure if python would automatically close it, seems like a good idea though
