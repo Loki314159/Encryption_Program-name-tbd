@@ -466,8 +466,8 @@ def changePassword():
         newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n") #put the file back together
         newuid= int(line[2])+1 #keep the uids incrementing each time but also not break 
     
-    newCredentialsFile.close()
-    credentialsFile.close()
+    newCredentialsFile.close() #close the document
+    credentialsFile.close() #close the document
     os.remove("credentials.txt")# removes the file credentials txt to free up the name
     os.rename("newcredentials.txt", "credentials.txt")# renames the newly written credentials file to the original name
 # ---------------------------------------------------------------#

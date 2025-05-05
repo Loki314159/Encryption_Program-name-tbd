@@ -95,3 +95,7 @@ Talked to James about changing the loginscreen that I may have changed on the 16
 
 3/05/2025
 wrote in some comments at points specified to me by some classmates that they felt needed more clarification due to not understanding
+
+5/05/2025
+gonna reduce the use of global variables due to bad practice
+will encrypt the creds file, probably rename it and create an obfuscated variant of the code
