@@ -93,7 +93,7 @@ def trifid():
     forgetAll()
     lightBlueButtons()
     trifidButton.config(bg="blue", fg="white")
-    decryptButton.config(command=trifidDecrypt)
+    decryptButton.config(command=callTrifidDecrypt)
     encryptButton.config(command=trifidEncrypt)# changes the configuration of the button so that it calls the specified command
     keyLabel.grid(column=1, row=2, sticky="nw")
     keyBox.grid(column=1, row=2, sticky="we")
@@ -316,9 +316,16 @@ def substitutionEncrypt():
     Promise: place decrypted ciphertext in plaintext box
 """
 # ---------------------------------------------------------------#
-def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
-    cipherList=list(Textboxformatter(ciphertextBox.get("1.0", tk.END)))
-    keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
+def callTrifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
+    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
+    key=keyBox.get()
+    plaintext = trifidDecrypt(ciphertext, key)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
+
+def trifidDecrypt(ciphertext, key): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
+    cipherList=list(ciphertext)
+    keyList=list(key.replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5)) #reshape key into key cube
     xCoordinate = []
     yCoordinate = []
@@ -335,8 +342,7 @@ def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     for i in range(len(cipherList)):
         plainList.append(cipherKey[xCoordinate[i]][yCoordinate[ (i+1) % len(cipherList)]][zCoordinate[ (i+2) % len(cipherList)]]) #shift coordinates back and write out the plaintext
     plaintext="".join(plainList)
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    return plaintext
 # ---------------------------------------------------------------#
 """
     Purpose: Decrypt ciphertext with caesar method

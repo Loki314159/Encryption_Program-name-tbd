@@ -105,3 +105,6 @@ removed global variables, now gonna make sure the program still works
 Caesar broke, will fix. So did substitution, but I broke that earlier apparently.
 Caesar was encrypting twice instead of having an encrypt, substitution wasn't splitting the ciphertext properly, both about 1 line fix
 now that that is fixed I think I may fix up code so that I will have encryptions as their own functions, though not necessarily optimal for this scale, I do want to make this more scaleable
+
+pulled out the trifid decrypt function, will use that as a form of template for the rest of my code
+
