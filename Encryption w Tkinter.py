@@ -4,45 +4,6 @@ import base64 as b64
 import RSA as rsa
 import LoginScreenLite as ls
 import os
-
-# ---------------------------------------------------------------#
-"""
-    Purpose: clear out global variables so things don't endlessly append
-    Requirement: be called
-    Promise: all variables will be respectively empty
-"""
-"""
-    These global variables are used throughout most of the encryption and decryption functions
-"""
-# ---------------------------------------------------------------#
-def resetVariables():
-    global ciphertext
-    global cipherList
-    global cipherNumbers
-    global plaintext
-    global plainList
-    global plainNumbers
-    global xCoordinate
-    global yCoordinate
-    global zCoordinate
-    global cipherKey
-    global asciiList
-    global publicKey
-    global privateKey
-    ciphertext=""
-    cipherList=[]
-    cipherNumbers=[]
-    plaintext=""
-    plainList=[]
-    plainNumbers=[]
-    xCoordinate = []
-    yCoordinate = []
-    zCoordinate = []
-    cipherKey=[]
-    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
-    publicKey=""
-    privateKey=""
-resetVariables() #calling it at start to avoid breaking everything
 # ---------------------------------------------------------------#
 """
     Purpose: clear out all the buttons for each encryption method
@@ -260,10 +221,13 @@ def changeDetails():
 """
 # ---------------------------------------------------------------#
 def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
-    resetVariables() # example key^^^
+    ciphertext=""   # example key^^^
     plainList=list(Textboxformatter(plaintextBox.get("1.0", tk.END))) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5))#reshape key into key cube 
+    xCoordinate = []
+    yCoordinate = []
+    zCoordinate = []
     for i in plainList:
         for x in range(5):
             for y in range(5):
@@ -272,6 +236,7 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
                         xCoordinate.append(x)
                         yCoordinate.append(y)
                         zCoordinate.append(z)
+    cipherList=[]
     for i in range(len(plainList)):
         cipherList.append(cipherKey[xCoordinate[i]][yCoordinate[i-1]][zCoordinate[i-2]]) #shift coordinates and write out the ciphertext
     ciphertext="".join(cipherList)
@@ -285,10 +250,11 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
 """
 # ---------------------------------------------------------------#
 def caesarEncrypt():
-    resetVariables()
     ciphertext=""
+    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    plainNumbers=[]
     for i in plaintext:
         plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
@@ -304,11 +270,9 @@ def caesarEncrypt():
 """
 # ---------------------------------------------------------------#
 def RSAPubEncrypt():
-    resetVariables()
-    RSAGenKeys()
+    privateKey, publicKey = RSAGenKeys()
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
-    publicKey=publicKeyBox.get()
     blockSize = 200 # specifies how large a text can be in characters before it will be split into another chunk
     splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
     #^ this allows RSA to be performed on text of any length given the valid characters sizes, after testing it broke with 214 bytes of text and not with 213, all valid characters are 1 byte so just chars = bytes and 200 seems fine
@@ -325,7 +289,7 @@ def RSAPubEncrypt():
 """
 # ---------------------------------------------------------------#
 def base64Encrypt():
-    resetVariables()
+    ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
     ciphertextBox.delete("1.0", tk.END)
@@ -338,7 +302,6 @@ def base64Encrypt():
 """
 # ---------------------------------------------------------------#
 def substitutionEncrypt():
-    resetVariables()
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
     for i in plaintext:
@@ -354,10 +317,12 @@ def substitutionEncrypt():
 """
 # ---------------------------------------------------------------#
 def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
-    resetVariables()
     cipherList=list(Textboxformatter(ciphertextBox.get("1.0", tk.END)))
     keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5)) #reshape key into key cube
+    xCoordinate = []
+    yCoordinate = []
+    zCoordinate = []
     for i in cipherList:
         for x in range(5):
             for y in range(5):
@@ -366,6 +331,7 @@ def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
                         xCoordinate.append(x)
                         yCoordinate.append(y)
                         zCoordinate.append(z)
+    plainList=[]
     for i in range(len(cipherList)):
         plainList.append(cipherKey[xCoordinate[i]][yCoordinate[ (i+1) % len(cipherList)]][zCoordinate[ (i+2) % len(cipherList)]]) #shift coordinates back and write out the plaintext
     plaintext="".join(plainList)
@@ -379,13 +345,14 @@ def trifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
 """
 # ---------------------------------------------------------------#
 def caesarDecrypt():
-    resetVariables()
+    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
     plaintext=""
-    shift=int(shiftBox.get())*-1 #grab key and make sure I can do math with it, turning it negative because I am decrypting
+    shift=int(shiftBox.get()) #grab key and make sure I can do math with it
     ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END)) 
+    cipherNumbers=[]
     for i in ciphertext:
         cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
-    plainNumbers = [x+shift for x in cipherNumbers] #add shift to all characters in plaintext
+    plainNumbers = [x-shift for x in cipherNumbers] #use negative shift to all characters in plaintext because it is decryption
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
     plaintextBox.delete("1.0", tk.END)
@@ -398,12 +365,9 @@ def caesarDecrypt():
 """
 # ---------------------------------------------------------------#
 def RSAPrivDecrypt():
-    resetVariables()
-    RSAGenKeys()
-    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
-    privateKey=privateKeyBox.get()
+    privateKey, publicKey = RSAGenKeys()
     plaintext=""
-    
+    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
     cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
     print(cipherList)
     for i in cipherList:
@@ -419,7 +383,7 @@ def RSAPrivDecrypt():
 """
 # ---------------------------------------------------------------#
 def base64Decrypt():
-    resetVariables()
+    plaintext=""
     ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
     plaintext=b64.b64decode(ciphertext).decode("ascii") #turn ciphertext from base 64
     plaintextBox.delete("1.0", tk.END)
@@ -432,10 +396,9 @@ def base64Decrypt():
 """
 # ---------------------------------------------------------------#
 def substitutionDecrypt():
-    resetVariables()
     plaintext=""
-    cipherList=Textboxformatter(ciphertextBox.get("1.0", tk.END)) #take apart the list and return the characters for each value
-    for i in cipherList: 
+    cipherList=Textboxformatter(ciphertextBox.get("1.0", tk.END)).split() #take apart the list and return the characters for each value
+    for i in cipherList:
         plaintext+=chr(int(i))
     plaintextBox.delete("1.0", tk.END)
     plaintextBox.insert("1.0", plaintext)

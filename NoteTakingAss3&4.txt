@@ -99,3 +99,9 @@ wrote in some comments at points specified to me by some classmates that they fe
 5/05/2025
 gonna reduce the use of global variables due to bad practice
 will encrypt the creds file, probably rename it and create an obfuscated variant of the code
+
+6/05/2025
+removed global variables, now gonna make sure the program still works
+Caesar broke, will fix. So did substitution, but I broke that earlier apparently.
+Caesar was encrypting twice instead of having an encrypt, substitution wasn't splitting the ciphertext properly, both about 1 line fix
+now that that is fixed I think I may fix up code so that I will have encryptions as their own functions, though not necessarily optimal for this scale, I do want to make this more scaleable
