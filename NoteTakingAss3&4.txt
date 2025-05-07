@@ -108,3 +108,5 @@ now that that is fixed I think I may fix up code so that I will have encryptions
 
 pulled out the trifid decrypt function, will use that as a form of template for the rest of my code
 
+7/05/2025
+watching some john hammond malware analysis and deconstruction while I think about how to obfuscate the code

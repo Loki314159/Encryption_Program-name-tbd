@@ -94,7 +94,7 @@ def trifid():
     lightBlueButtons()
     trifidButton.config(bg="blue", fg="white")
     decryptButton.config(command=callTrifidDecrypt)
-    encryptButton.config(command=trifidEncrypt)# changes the configuration of the button so that it calls the specified command
+    encryptButton.config(command=callTrifidEncrypt)# changes the configuration of the button so that it calls the specified command
     keyLabel.grid(column=1, row=2, sticky="nw")
     keyBox.grid(column=1, row=2, sticky="we")
     encryptButton.grid(column=1, row=1, sticky="s") # places the widget in the specified column and row where it will be alligned to the cardinal direction specified
@@ -115,8 +115,8 @@ def caesar():
     lightBlueButtons()
     print("caesar")
     caesarButton.config(bg="blue", fg="white")
-    decryptButton.config(command=caesarDecrypt)
-    encryptButton.config(command=caesarEncrypt)
+    decryptButton.config(command=callCaesarDecrypt)
+    encryptButton.config(command=callCaesarEncrypt)
     shiftBox.grid(column=1, row=2)
     shiftLabel.grid(column=1, row=2, sticky="nw")
     encryptButton.grid(column=1, row=1, sticky="s")
@@ -213,6 +213,10 @@ def changeDetails():
     newUserButton.grid(column="1", row="4", sticky="n")
     removeUserButton.grid(column="1", row="4", sticky="s")
 
+def encryptCredsFile():
+    credentialsFile = open("credentials.txt", "r")
+    newCredentialsFile = open("newcredentials.txt", "w")
+    
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with trifid method
@@ -220,10 +224,17 @@ def changeDetails():
     Promise: place encrypted plaintext in ciphertext box
 """
 # ---------------------------------------------------------------#
-def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
+def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     ciphertext=""   # example key^^^
-    plainList=list(Textboxformatter(plaintextBox.get("1.0", tk.END))) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
-    keyList=list(keyBox.get().replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
+    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END)) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
+    key=keyBox.get()
+    ciphertext = trifidEncrypt(key, plaintext)
+    ciphertextBox.delete("1.0", tk.END) # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
+    ciphertextBox.insert("1.0", ciphertext) # similar difference here, just inserts ciphertext
+
+def trifidEncrypt(key, plaintext):
+    plainList=list(plaintext)
+    keyList=list(key.replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5))#reshape key into key cube 
     xCoordinate = []
     yCoordinate = []
@@ -240,8 +251,7 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     for i in range(len(plainList)):
         cipherList.append(cipherKey[xCoordinate[i]][yCoordinate[i-1]][zCoordinate[i-2]]) #shift coordinates and write out the ciphertext
     ciphertext="".join(cipherList)
-    ciphertextBox.delete("1.0", tk.END) # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
-    ciphertextBox.insert("1.0", ciphertext) # similar difference here, just inserts ciphertext
+    return ciphertext
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with caesar method
@@ -249,19 +259,23 @@ def trifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY
     Promise: place encrypted plaintext in ciphertext box
 """
 # ---------------------------------------------------------------#
-def caesarEncrypt():
-    ciphertext=""
-    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
+def callCaesarEncrypt():
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    ciphertext=caesarEncrypt(shift, plaintext)
+    ciphertextBox.delete("1.0", tk.END)
+    ciphertextBox.insert("1.0", ciphertext)
+
+def caesarEncrypt(shift, plaintext):
+    ciphertext=""
     plainNumbers=[]
+    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
     for i in plaintext:
         plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
         ciphertext+=asciiList[i%len(asciiList)] #swaps out the numbers for their respective character found in the asciilist (the mod operator prevents out of bound requests)
-    ciphertextBox.delete("1.0", tk.END)
-    ciphertextBox.insert("1.0", ciphertext)
+    return ciphertext
 # ---------------------------------------------------------------#
 """
     Purpose: Encrypt plaintext with RSA method using the public key
@@ -271,8 +285,8 @@ def caesarEncrypt():
 # ---------------------------------------------------------------#
 def RSAPubEncrypt():
     privateKey, publicKey = RSAGenKeys()
-    ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    ciphertext=""
     blockSize = 200 # specifies how large a text can be in characters before it will be split into another chunk
     splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
     #^ this allows RSA to be performed on text of any length given the valid characters sizes, after testing it broke with 214 bytes of text and not with 213, all valid characters are 1 byte so just chars = bytes and 200 seems fine
@@ -319,11 +333,11 @@ def substitutionEncrypt():
 def callTrifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
     key=keyBox.get()
-    plaintext = trifidDecrypt(ciphertext, key)
+    plaintext = trifidDecrypt(key, ciphertext)
     plaintextBox.delete("1.0", tk.END)
     plaintextBox.insert("1.0", plaintext)
 
-def trifidDecrypt(ciphertext, key): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
+def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     cipherList=list(ciphertext)
     keyList=list(key.replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic change
     cipherKey=np.reshape(keyList,(5,5,5)) #reshape key into key cube
@@ -350,19 +364,24 @@ def trifidDecrypt(ciphertext, key): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJ
     Promise: place decrypted ciphertext in plaintext box
 """
 # ---------------------------------------------------------------#
-def caesarDecrypt():
-    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
-    plaintext=""
+def callCaesarDecrypt():
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
     ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END)) 
+    plaintext=caesarDecrypt(shift, ciphertext)
+    plaintextBox.delete("1.0", tk.END)
+    plaintextBox.insert("1.0", plaintext)
+
+def caesarDecrypt(shift, ciphertext):
+    asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
+    plaintext=""
     cipherNumbers=[]
     for i in ciphertext:
         cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
     plainNumbers = [x-shift for x in cipherNumbers] #use negative shift to all characters in plaintext because it is decryption
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    return plaintext
+
 # ---------------------------------------------------------------#
 """
     Purpose: Decrypt ciphertext with RSA method and the private key
@@ -372,10 +391,9 @@ def caesarDecrypt():
 # ---------------------------------------------------------------#
 def RSAPrivDecrypt():
     privateKey, publicKey = RSAGenKeys()
-    plaintext=""
     ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
     cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
-    print(cipherList)
+    plaintext=""
     for i in cipherList:
         if i != "": #null part would make it break, this stops that
             plaintext+=rsa.decryptRSA(i, privateKey) #stitch back all of the pieces together
