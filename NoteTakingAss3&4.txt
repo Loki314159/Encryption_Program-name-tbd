@@ -113,3 +113,7 @@ watching some john hammond malware analysis and deconstruction while I think abo
 maybe I wll make ts object based, will probably finish ass4 before I go and do that, and all my other assessments
 time to make error function where I just throw it the message I want, and move stuff into try catch and try and cause errors, the function will take my string and display an alert box to the user
 nvm that already exists as messagebox
+
+8/05/2025
+making a tool to obfuscate a trifid key, might implement random and autofilling keys similar to what I did for RSA, just using randint for caesar and shuffling my normal list for trifid and that covers my bases
+actually gonna implement the encryption decryption of the creds tmrw and work on the documentation better
