@@ -110,3 +110,6 @@ pulled out the trifid decrypt function, will use that as a form of template for 
 
 7/05/2025
 watching some john hammond malware analysis and deconstruction while I think about how to obfuscate the code
+maybe I wll make ts object based, will probably finish ass4 before I go and do that, and all my other assessments
+time to make error function where I just throw it the message I want, and move stuff into try catch and try and cause errors, the function will take my string and display an alert box to the user
+nvm that already exists as messagebox
