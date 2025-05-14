@@ -117,3 +117,7 @@ nvm that already exists as messagebox
 8/05/2025
 making a tool to obfuscate a trifid key, might implement random and autofilling keys similar to what I did for RSA, just using randint for caesar and shuffling my normal list for trifid and that covers my bases
 actually gonna implement the encryption decryption of the creds tmrw and work on the documentation better
+
+14/05/2025
+implemented customtkinter, looks beautiful now but can still be refined
+(haven't encrypted the creds file yet)

@@ -5,6 +5,7 @@ import base64 as b64
 import RSA as rsa
 import LoginScreenLite as ls
 import os
+import customtkinter
 # ---------------------------------------------------------------#
 """
     Purpose: clear out all the buttons for each encryption method
@@ -19,8 +20,8 @@ def forgetAll():
     plaintextLabel.grid_forget()
     encryptButton.grid_forget()
     decryptButton.grid_forget()
-    encryptButton.config(text="Encrypt:")
-    decryptButton.config(text="Decrypt:")
+    encryptButton.configure(text="Encrypt:")
+    decryptButton.configure(text="Decrypt:")
     keyBox.grid_forget()
     keyLabel.grid_forget()
     shiftBox.grid_forget()
@@ -46,13 +47,13 @@ def forgetAll():
     Promise: all buttons will be turned light blue
 """
 # ---------------------------------------------------------------#
-def lightBlueButtons():
-    trifidButton.config(bg="lightblue", fg="black")
-    caesarButton.config(bg="lightblue", fg="black")
-    RSAButton.config(bg="lightblue", fg="black")
-    b64Button.config(bg="lightblue", fg="black")
-    substitutionButton.config(bg="lightblue", fg="black")
-    changeDetailsButton.config(bg="lightblue", fg="black")
+def blueButtons():
+    trifidButton.configure(fg_color="#3f5799", text_color="black")
+    caesarButton.configure(fg_color="#3f5799", text_color="black")
+    RSAButton.configure(fg_color="#3f5799", text_color="black")
+    b64Button.configure(fg_color="#3f5799", text_color="black")
+    substitutionButton.configure(fg_color="#3f5799", text_color="black")
+    changeDetailsButton.configure(fg_color="#3f5799", text_color="black")
 # ---------------------------------------------------------------#
 """
     Purpose: Generate RSA keys using RSA.py provided in assessment files
@@ -64,9 +65,9 @@ def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
         return privateKeyBox.get(), publicKeyBox.get()
     privateKey, publicKey = rsa.makeRSAKey()
-    privateKeyBox.delete(0, tk.END)# this will delete everything in the Entry box from the start (0) to the end (tk.END)
+    privateKeyBox.delete(0, customtkinter.CTkEND)# this will delete everything in the Entry box from the start (0) to the end (customtkinter.CTkEND)
     privateKeyBox.insert(0, privateKey)# this will place the privateKey in the privatekeybox at the start (0)
-    publicKeyBox.delete(0, tk.END)
+    publicKeyBox.delete(0, customtkinter.CTkEND)
     publicKeyBox.insert(0, publicKey)
     return privateKey, publicKey # returns both keys to the operation that called the function
 # ---------------------------------------------------------------#
@@ -90,10 +91,10 @@ def Textboxformatter(text):
 # ---------------------------------------------------------------#
 def trifid():
     forgetAll()
-    lightBlueButtons()
-    trifidButton.config(bg="blue", fg="white")
-    decryptButton.config(command=callTrifidDecrypt)
-    encryptButton.config(command=callTrifidEncrypt)# changes the configuration of the button so that it calls the specified command
+    blueButtons()
+    trifidButton.configure(fg_color="#3f5799", text_color="white")
+    decryptButton.configure(command=callTrifidDecrypt)
+    encryptButton.configure(command=callTrifidEncrypt)# changes the configuration of the button so that it calls the specified command
     keyLabel.grid(column=1, row=2, sticky="nw")
     keyBox.grid(column=1, row=2, sticky="we")
     encryptButton.grid(column=1, row=1, sticky="s") # places the widget in the specified column and row where it will be alligned to the cardinal direction specified
@@ -111,10 +112,10 @@ def trifid():
 # ---------------------------------------------------------------#
 def caesar():
     forgetAll()
-    lightBlueButtons()
-    caesarButton.config(bg="blue", fg="white")
-    decryptButton.config(command=callCaesarDecrypt)
-    encryptButton.config(command=callCaesarEncrypt)
+    blueButtons()
+    caesarButton.configure(fg_color="#3f5799", text_color="white")
+    decryptButton.configure(command=callCaesarDecrypt)
+    encryptButton.configure(command=callCaesarEncrypt)
     shiftBox.grid(column=1, row=2)
     shiftLabel.grid(column=1, row=2, sticky="nw")
     encryptButton.grid(column=1, row=1, sticky="s")
@@ -132,10 +133,10 @@ def caesar():
 # ---------------------------------------------------------------#
 def RSA():
     forgetAll()
-    lightBlueButtons()
-    RSAButton.config(bg="blue", fg="white")
-    decryptButton.config(command=callRSAPrivDecrypt, text="Priv Decrypt")
-    encryptButton.config(command=callRSAPubEncrypt, text="Pub Encrypt")
+    blueButtons()
+    RSAButton.configure(fg_color="#3f5799", text_color="white")
+    decryptButton.configure(command=callRSAPrivDecrypt, text="Priv Decrypt")
+    encryptButton.configure(command=callRSAPubEncrypt, text="Pub Encrypt")
     decryptButton.grid(column=1, row=2, sticky="s")
     encryptButton.grid(column=1, row=2, sticky="n")
     publicKeyBox.grid(column=1, row=1)
@@ -155,10 +156,10 @@ def RSA():
 # ---------------------------------------------------------------#
 def base64():
     forgetAll()
-    lightBlueButtons()
-    b64Button.config(bg="blue", fg="white")
-    decryptButton.config(command=callBase64Decrypt)
-    encryptButton.config(command=callBase64Encrypt)
+    blueButtons()
+    b64Button.configure(fg_color="#3f5799", text_color="white")
+    decryptButton.configure(command=callBase64Decrypt)
+    encryptButton.configure(command=callBase64Encrypt)
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
     ciphertextBox.grid(column=1, row=4)
@@ -174,10 +175,10 @@ def base64():
 # ---------------------------------------------------------------#
 def substitution():
     forgetAll()
-    lightBlueButtons()
-    substitutionButton.config(bg="blue", fg="white")
-    decryptButton.config(command=callSubstitutionDecrypt)
-    encryptButton.config(command=callSubstitutionEncrypt)
+    blueButtons()
+    substitutionButton.configure(fg_color="#3f5799", text_color="white")
+    decryptButton.configure(command=callSubstitutionDecrypt)
+    encryptButton.configure(command=callSubstitutionEncrypt)
     encryptButton.grid(column=1, row=1, sticky="s")
     decryptButton.grid(column=1, row=3, sticky="n")
     ciphertextBox.grid(column=1, row=4)
@@ -193,8 +194,8 @@ def substitution():
 # ---------------------------------------------------------------#
 def changeDetails():
     forgetAll()
-    lightBlueButtons()
-    changeDetailsButton.config(bg="blue", fg="white")
+    blueButtons()
+    changeDetailsButton.configure(fg_color="#3f5799", text_color="white")
     usernameBox.grid(column=1, row=0)
     usernameLabel.grid(column=1, row=0, sticky="nw")
     passwordBox.grid(column=1, row=1)
@@ -220,11 +221,11 @@ def encryptCredsFile():
 # ---------------------------------------------------------------#
 def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     ciphertext=""   # example key^^^
-    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END)) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
+    plaintext=Textboxformatter(plaintextBox.get("0.0", "end")) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
     key=keyBox.get()
     ciphertext = trifidEncrypt(key, plaintext)
-    ciphertextBox.delete("1.0", tk.END) # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
-    ciphertextBox.insert("1.0", ciphertext) # similar difference here, just inserts ciphertext
+    ciphertextBox.delete("0.0", "end") # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
+    ciphertextBox.insert("0.0", ciphertext) # similar difference here, just inserts ciphertext
 
 def trifidEncrypt(key, plaintext):
     plainList=list(plaintext)
@@ -260,10 +261,10 @@ def trifidEncrypt(key, plaintext):
 # ---------------------------------------------------------------#
 def callCaesarEncrypt():
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
-    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=caesarEncrypt(shift, plaintext)
-    ciphertextBox.delete("1.0", tk.END)
-    ciphertextBox.insert("1.0", ciphertext)
+    ciphertextBox.delete("0.0", "end")
+    ciphertextBox.insert("0.0", ciphertext)
 
 def caesarEncrypt(shift, plaintext):
     ciphertext=""
@@ -284,10 +285,10 @@ def caesarEncrypt(shift, plaintext):
 # ---------------------------------------------------------------#
 def callRSAPubEncrypt():
     privateKey, publicKey = RSAGenKeys()
-    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext = RSAPubEncrypt(publicKey, plaintext)
-    ciphertextBox.delete("1.0", tk.END)
-    ciphertextBox.insert("1.0", ciphertext)
+    ciphertextBox.delete("0.0", "end")
+    ciphertextBox.insert("0.0", ciphertext)
 
 def RSAPubEncrypt(publicKey, plaintext):
     blockSize = 200 # specifies how large a text can be in characters before it will be split into another chunk
@@ -306,10 +307,10 @@ def RSAPubEncrypt(publicKey, plaintext):
 # ---------------------------------------------------------------#
 def callBase64Encrypt():
     ciphertext=""
-    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=base64Encrypt(plaintext)
-    ciphertextBox.delete("1.0", tk.END)
-    ciphertextBox.insert("1.0", ciphertext)
+    ciphertextBox.delete("0.0", "end")
+    ciphertextBox.insert("0.0", ciphertext)
 
 def base64Encrypt(plaintext):
     ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
@@ -323,10 +324,10 @@ def base64Encrypt(plaintext):
 # ---------------------------------------------------------------#
 def callSubstitutionEncrypt():
     ciphertext=""
-    plaintext=Textboxformatter(plaintextBox.get("1.0", tk.END))
+    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=substitutionEncrypt(plaintext)
-    ciphertextBox.delete("1.0", tk.END)
-    ciphertextBox.insert("1.0", ciphertext)
+    ciphertextBox.delete("0.0", "end")
+    ciphertextBox.insert("0.0", ciphertext)
 
 def substitutionEncrypt(plaintext):
     ciphertext=""
@@ -341,11 +342,11 @@ def substitutionEncrypt(plaintext):
 """
 # ---------------------------------------------------------------#
 def callTrifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
-    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
+    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
     key=keyBox.get()
     plaintext = trifidDecrypt(key, ciphertext)
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    plaintextBox.delete("0.0", "end")
+    plaintextBox.insert("0.0", plaintext)
 
 def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
     cipherList=list(ciphertext)
@@ -382,10 +383,10 @@ def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJ
 # ---------------------------------------------------------------#
 def callCaesarDecrypt():
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
-    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END)) 
+    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end")) 
     plaintext=caesarDecrypt(shift, ciphertext)
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    plaintextBox.delete("0.0", "end")
+    plaintextBox.insert("0.0", plaintext)
 
 def caesarDecrypt(shift, ciphertext):
     asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
@@ -407,10 +408,10 @@ def caesarDecrypt(shift, ciphertext):
 # ---------------------------------------------------------------#
 def callRSAPrivDecrypt():
     privateKey, publicKey = RSAGenKeys()
-    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
+    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
     plaintext = RSAPrivDecrypt(privateKey, ciphertext)
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    plaintextBox.delete("0.0", "end")
+    plaintextBox.insert("0.0", plaintext)
 
 def RSAPrivDecrypt(privateKey, ciphertext):
     cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
@@ -428,10 +429,10 @@ def RSAPrivDecrypt(privateKey, ciphertext):
 # ---------------------------------------------------------------#
 def callBase64Decrypt():
     plaintext=""
-    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
+    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
     plaintext=base64Decrypt(ciphertext)
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    plaintextBox.delete("0.0", "end")
+    plaintextBox.insert("0.0", plaintext)
 
 def base64Decrypt(ciphertext):
     plaintext=b64.b64decode(ciphertext).decode("ascii") #turn ciphertext from base 64
@@ -445,10 +446,10 @@ def base64Decrypt(ciphertext):
 # ---------------------------------------------------------------#
 def callSubstitutionDecrypt():
     plaintext=""
-    ciphertext=Textboxformatter(ciphertextBox.get("1.0", tk.END))
+    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
     plaintext=substitutionDecrypt(ciphertext)
-    plaintextBox.delete("1.0", tk.END)
-    plaintextBox.insert("1.0", plaintext)
+    plaintextBox.delete("0.0", "end")
+    plaintextBox.insert("0.0", plaintext)
 
 def substitutionDecrypt(ciphertext):
     cipherList=ciphertext.split() #take apart the list of the characters for each value
@@ -581,24 +582,23 @@ def removeuser():
 """
 # ---------------------------------------------------------------#
 if ls.start():
-    window=tk.Tk()
+    window=customtkinter.CTk()
     window.rowconfigure(index=[0, 1, 2, 3, 4], minsize=110)
     window.columnconfigure(index=0, minsize=110)
-    window.minsize(366, 550)
+    #window.minsize(366, 550)
     #window.maxsize(366, 550)
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(BASE_DIR, 'School_logo_Lake_G.ico') #Lake G ico for both windows
     window.iconbitmap(icon_path)
     window.title("EncryptionProgram") #nice name :D
-    Frame1=tk.Frame(window)
-    trifidButton=tk.Button(borderwidth=7, bg="lightblue", command= trifid, text="Trifid") #all the method buttons
-    caesarButton=tk.Button(borderwidth=7, bg="lightblue", command= caesar, text="Caesar")
-    RSAButton=tk.Button(borderwidth=7, bg="lightblue", command= RSA, text="RSA")
-    b64Button=tk.Button(borderwidth=7, bg="lightblue", command= base64, text="Base 64")
-    substitutionButton=tk.Button(borderwidth=7, bg="lightblue", command= substitution, text="Substitution")
+    trifidButton=customtkinter.CTkButton(window, border_width=1, corner_radius=3 , fg_color="#3f5799", command= trifid, text="Trifid", text_color="black") #all the method buttons
+    caesarButton=customtkinter.CTkButton(window, border_width=1, corner_radius=3 , fg_color="#3f5799", command= caesar, text="Caesar", text_color="black")
+    RSAButton=customtkinter.CTkButton(window, border_width=1, corner_radius=3 , fg_color="#3f5799", command= RSA, text="RSA", text_color="black")
+    b64Button=customtkinter.CTkButton(window, border_width=1, corner_radius=3 , fg_color="#3f5799", command= base64, text="Base 64", text_color="black")
+    substitutionButton=customtkinter.CTkButton(window, border_width=1, corner_radius=3 , fg_color="#3f5799", command= substitution, text="Substitution", text_color="black")
     
-    changeDetailsButton=tk.Button(height=1, width=7, borderwidth=3, bg="lightblue", command= changeDetails, text="Details") #detail button
+    changeDetailsButton=customtkinter.CTkButton(window, height=1, width=7, border_width=1, corner_radius=2 , fg_color="#3f5799", command= changeDetails, text="Details", text_color="black") #detail button
 
     trifidButton.grid(column=0, row=0, sticky="nsew") # unlike a lot of the other widgets, we always want these ones visible and accessible so they are put into the window at the start
     caesarButton.grid(column=0, row=1, sticky="nsew")
@@ -607,36 +607,36 @@ if ls.start():
     substitutionButton.grid(column=0, row=4, sticky="nsew")
     changeDetailsButton.grid(column=1, row=0, sticky="ne")
 
-    plaintextLabel=tk.Label(text="Plaintext:")
-    plaintextBox=tk.Text(height=3) # the plaintext and cipihertext fields need to be Text to allow multiline messages to be easily visible for the end user
-    ciphertextLabel=tk.Label(text="Ciphertext:")
-    ciphertextBox=tk.Text(height=3)
+    plaintextLabel=customtkinter.CTkLabel(window, text="Plaintext:")
+    plaintextBox=customtkinter.CTkTextbox(window, height=3) # the plaintext and cipihertext fields need to be Text to allow multiline messages to be easily visible for the end user
+    ciphertextLabel=customtkinter.CTkLabel(window, text="Ciphertext:")
+    ciphertextBox=customtkinter.CTkTextbox(window, height=3)
 
-    usernameBox=tk.Entry(textvariable="", justify="left") #username/password/uid boxes and labels
-    passwordBox=tk.Entry(textvariable="", justify="left")
-    uidBox=tk.Entry(textvariable="", justify="left")
-    usernameLabel=tk.Label(text="Username:")
-    passwordLabel=tk.Label(text="Password:")
-    uidLabel=tk.Label(text="UID:")
+    usernameBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #username/password/uid boxes and labels
+    passwordBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
+    uidBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
+    usernameLabel=customtkinter.CTkLabel(window, text="Username:")
+    passwordLabel=customtkinter.CTkLabel(window, text="Password:")
+    uidLabel=customtkinter.CTkLabel(window, text="UID:")
 
-    encryptButton=tk.Button(text="Encrypt", bg="hotpink") #enc/dec buttons
-    decryptButton=tk.Button(text="Decrypt", bg="hotpink")
+    encryptButton=customtkinter.CTkButton(window, text="Encrypt", fg_color="hotpink") #enc/dec buttons
+    decryptButton=customtkinter.CTkButton(window, text="Decrypt", fg_color="hotpink")
 
-    changePasswordButton=tk.Button(height=1, width=22, borderwidth=3, bg="lightblue", command= changePassword, text="changePassword") #buttons that call their namesake function
-    changeUsernameButton=tk.Button(height=1, width=22, borderwidth=3, bg="lightblue", command= changeUsername, text="changeUsername")# everything other than the command is cosmetic
-    newUserButton=tk.Button(height=1, width=11, borderwidth=3, bg="lightblue", command= newUser, text="newUser")
-    removeUserButton=tk.Button(height=1, width=18, borderwidth=3, bg="lightblue", command= removeuser, text="removeuser")
+    changePasswordButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#3f5799", command= changePassword, text="changePassword", text_color="black") #buttons that call their namesake function
+    changeUsernameButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#3f5799", command= changeUsername, text="changeUsername", text_color="black")# everything other than the command is cosmetic
+    newUserButton=customtkinter.CTkButton(window, height=1, width=11, border_width=1, fg_color="#3f5799", command= newUser, text="newUser", text_color="black")
+    removeUserButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#3f5799", command= removeuser, text="removeuser", text_color="black")
 
-    keyBox=tk.Entry(textvariable="", justify="left") #trifid key box/label, independant because that way it is kept when using other methods
-    keyLabel=tk.Label(text="Key:")
+    keyBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #trifid key box/label, independant because that way it is kept when using other methods
+    keyLabel=customtkinter.CTkLabel(window, text="Key:")
 
-    shiftBox=tk.Entry(textvariable="", justify="left") #caesar shift
-    shiftLabel=tk.Label(text="Shift:")
+    shiftBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #caesar shift
+    shiftLabel=customtkinter.CTkLabel(window, text="Shift:")
 
-    privateKeyBox=tk.Entry(textvariable="", justify="left")
-    privateKeyLabel=tk.Label(text="Private Key:") #priv/pub key
+    privateKeyBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
+    privateKeyLabel=customtkinter.CTkLabel(window, text="Private Key:") #priv/pub key
 
-    publicKeyBox=tk.Entry(textvariable="", justify="left")
-    publicKeyLabel=tk.Label(text="Public Key:")
+    publicKeyBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
+    publicKeyLabel=customtkinter.CTkLabel(window, text="Public Key:")
 
     window.mainloop()
