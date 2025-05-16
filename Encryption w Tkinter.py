@@ -38,8 +38,8 @@ def forgetAll():
     usernameLabel.grid_forget()
     passwordBox.grid_forget()
     passwordLabel.grid_forget()
-    uidBox.grid_forget()
-    uidLabel.grid_forget()
+    UIDBox.grid_forget()
+    UIDLabel.grid_forget()
     removeUserButton.grid_forget()
     getUIDButton.grid_forget()
     
@@ -57,6 +57,31 @@ def blueButtons():
     b64Button.configure(fg_color="#3f5799", text_color="black")
     substitutionButton.configure(fg_color="#3f5799", text_color="black")
     changeDetailsButton.configure(fg_color="#3f5799", text_color="black")
+
+def usernameExists(username):
+    credentialsFile = open("credentials.txt", "r")
+    usernameExists=False
+    try:
+        for line in credentialsFile:
+            line = line.split("|", 2)
+            if username == line[0].replace('\n', ''):
+                usernameExists=True
+            UID=line[2].replace('\n', '')
+            newUID= int(UID)+1
+    except UnboundLocalError:
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+    except:
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
+    credentialsFile.close()
+    UIDBox.delete(0, "end")
+    UIDBox.insert(0, UID)
+    return usernameExists
+
+def pipeCheck(text):
+    for i in text:
+        if i == "|":
+            return True
+    return False
 # ---------------------------------------------------------------#
 """
     Purpose: Generate RSA keys using RSA.py provided in assessment files
@@ -221,8 +246,8 @@ def changeDetails():
     usernameLabel.grid(column=1, row=0, sticky="nw")
     passwordBox.grid(column=1, row=1)
     passwordLabel.grid(column=1, row=1, sticky="nw")
-    uidBox.grid(column=1, row=2)
-    uidLabel.grid(column=1, row=2, sticky="nw")
+    UIDBox.grid(column=1, row=2)
+    UIDLabel.grid(column=1, row=2, sticky="nw")
     
     changePasswordButton.grid(column="1", row="3", sticky="new")
     changeUsernameButton.grid(column="1", row="3", sticky="sew")
@@ -232,23 +257,15 @@ def changeDetails():
 
 # ---------------------------------------------------------------#
 """
-    Purpose: 
-    Requirement: 
-    Promise: 
-"""
-# ---------------------------------------------------------------#
-def encryptCredsFile():
-    credentialsFile = open("credentials.txt", "r")
-    newCredentialsFile = open("newcredentials.txt", "w")
-
-# ---------------------------------------------------------------#
-"""
     Purpose: call the trifidEncrypt function and pass is text from the plaintext box and the key from the key box
     Requirement: Encrypt button be pressed
     Promise: insert encrypted text into the ciphertext box
 """
 # ---------------------------------------------------------------#
 def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
+    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+        messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
+        return
     ciphertext=""   # example key^^^
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end")) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
     key=trifidGenKeys()
@@ -286,6 +303,8 @@ def trifidEncrypt(key, plaintext):
         messagebox.showwarning("Value Error","Key too large or too small")
     except IndexError:
         messagebox.showwarning("Index Error","Character in plaintext that is not in the key")
+    except:
+        messagebox.showwarning("Generic Error", "Something has broken, make sure to only input a proper key")
     return ciphertext
 # ---------------------------------------------------------------#
 """
@@ -295,6 +314,9 @@ def trifidEncrypt(key, plaintext):
 """
 # ---------------------------------------------------------------#
 def callCaesarEncrypt():
+    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+        messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
+        return
     shift=caeserGenShift() #grab key and make sure I can do math with it
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=caesarEncrypt(shift, plaintext)
@@ -309,7 +331,9 @@ def caesarEncrypt(shift, plaintext):
         try:
             plainNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
         except ValueError:
-            raise ValueError(f"Character {repr(i)} not in asciiList")
+            messagebox.showwarning("Value Error",f"Bad character, {repr(i)} not in asciiList")
+        except:
+            messagebox.showwarning("Generic Error", "Something has broken, make sure to only input a proper numerical shift")
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
         ciphertext+=asciiList[i%len(asciiList)] #swaps out the numbers for their respective character found in the asciilist (the mod operator prevents out of bound requests)
@@ -322,6 +346,9 @@ def caesarEncrypt(shift, plaintext):
 """
 # ---------------------------------------------------------------#
 def callRSAPubEncrypt():
+    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+        messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
+        return
     privateKey, publicKey = RSAGenKeys()
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext = RSAPubEncrypt(publicKey, plaintext)
@@ -334,7 +361,10 @@ def RSAPubEncrypt(publicKey, plaintext):
     splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
     #^ this allows RSA to be performed on text of any length given the valid characters sizes, after testing it broke with 214 bytes of text and not with 213, all valid characters are 1 byte so just chars = bytes and 200 seems fine
     for i in splitPlaintext:
-        ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts as a delineator because it will not appear in encrypted RSA ever
+        try:
+            ciphertext+= rsa.encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts as a delineator because it will not appear in encrypted RSA ever
+        except:
+            messagebox.showwarning("Generic Error", "Something has broken, make sure to only input properly formatted  output with the correct key")
     return ciphertext
 # ---------------------------------------------------------------#
 """
@@ -344,6 +374,9 @@ def RSAPubEncrypt(publicKey, plaintext):
 """
 # ---------------------------------------------------------------#
 def callBase64Encrypt():
+    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+        messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
+        return
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=base64Encrypt(plaintext)
@@ -351,7 +384,10 @@ def callBase64Encrypt():
     ciphertextBox.insert("0.0", ciphertext)
 
 def base64Encrypt(plaintext):
-    ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
+    try:
+        ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
+    except:
+        messagebox.showwarning("Generic Error", "Something has broken")
     return ciphertext
 # ---------------------------------------------------------------#
 """
@@ -361,6 +397,9 @@ def base64Encrypt(plaintext):
 """
 # ---------------------------------------------------------------#
 def callSubstitutionEncrypt():
+    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+        messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
+        return
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=substitutionEncrypt(plaintext)
@@ -370,7 +409,10 @@ def callSubstitutionEncrypt():
 def substitutionEncrypt(plaintext):
     ciphertext=""
     for i in plaintext:
-        ciphertext+=(str(ord(i)) + " ") #combine and get all the ascii values for the plaintext 
+        try:
+            ciphertext+=(str(ord(i)) + " ") #combine and get all the ascii values for the plaintext 
+        except:
+            messagebox.showwarning("Generic Error", "Something has broken")
     return ciphertext
 # ---------------------------------------------------------------#
 """
@@ -380,6 +422,12 @@ def substitutionEncrypt(plaintext):
 """
 # ---------------------------------------------------------------#
 def callTrifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
+    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+        messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
+        return
+    if not keyBox.get():
+        messagebox.showwarning("Key Empty","Cannot decrypt without key")
+        return
     ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
     key=keyBox.get()
     plaintext = trifidDecrypt(key, ciphertext)
@@ -411,6 +459,8 @@ def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJ
         messagebox.showwarning("Value Error","Key too large or too small")
     except IndexError:
         messagebox.showwarning("Index Error","Character in plaintext that is not in the key")
+    except:
+        messagebox.showwarning("Generic Error", "Something has broken")
     return plaintext
 # ---------------------------------------------------------------#
 """
@@ -420,6 +470,12 @@ def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJ
 """
 # ---------------------------------------------------------------#
 def callCaesarDecrypt():
+    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+        messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
+        return
+    if not shiftBox.get():
+        messagebox.showwarning("Shift Empty","Cannot decrypt without shift")
+        return
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
     ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end")) 
     plaintext=caesarDecrypt(shift, ciphertext)
@@ -434,7 +490,9 @@ def caesarDecrypt(shift, ciphertext):
         try:
             cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
         except ValueError:
-            raise ValueError(f"Character {repr(i)} not in asciiList")
+            messagebox.showwarning("Value Error",f"Character {repr(i)} not in asciiList")
+        except:
+            messagebox.showwarning("Generic Error", "Something has broken")
     plainNumbers = [x-shift for x in cipherNumbers] #use negative shift to all characters in plaintext because it is decryption
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
@@ -448,18 +506,30 @@ def caesarDecrypt(shift, ciphertext):
 """
 # ---------------------------------------------------------------#
 def callRSAPrivDecrypt():
-    privateKey, publicKey = RSAGenKeys()
+    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+        messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
+        return
+    if not privateKeyBox.get():
+        messagebox.showwarning("Private Key Empty","Cannot decrypt without privatekey")
+        return
+    privateKey = privateKeyBox.get()
     ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
     plaintext = RSAPrivDecrypt(privateKey, ciphertext)
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
 
 def RSAPrivDecrypt(privateKey, ciphertext):
-    cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
+    try:
+        cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
+    except:
+        messagebox.showwarning("Generic Error", "Something has broken, ciphertext likely incorrectly formatted or broken")
     plaintext=""
     for i in cipherList:
         if i != "": #null part would make it break, this stops that
-            plaintext+=rsa.decryptRSA(i, privateKey) #stitch back all of the pieces together
+            try:
+                plaintext+=rsa.decryptRSA(i, privateKey) #stitch back all of the pieces together
+            except:
+                messagebox.showwarning("Generic Error", "Something has broken, make sure the ciphertext is RSA encrypted with this key")
     return plaintext
 # ---------------------------------------------------------------#
 """
@@ -469,9 +539,17 @@ def RSAPrivDecrypt(privateKey, ciphertext):
 """
 # ---------------------------------------------------------------#
 def callBase64Decrypt():
+    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+        messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
+        return
     plaintext=""
     ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
-    plaintext=base64Decrypt(ciphertext)
+    try:
+        plaintext=base64Decrypt(ciphertext)
+    except ValueError:
+        messagebox.showwarning("Value Error","string argument should contain only ASCII characters")
+    except:
+        messagebox.showwarning("Generic Error", "make sure to only input properly formatted base 64")
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
 
@@ -486,9 +564,17 @@ def base64Decrypt(ciphertext):
 """
 # ---------------------------------------------------------------#
 def callSubstitutionDecrypt():
+    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+        messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
+        return
     plaintext=""
     ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
-    plaintext=substitutionDecrypt(ciphertext)
+    try:
+        plaintext=substitutionDecrypt(ciphertext)
+    except ValueError:
+        messagebox.showwarning("Value Error","Probably not numbers being decrypted")
+    except:
+        messagebox.showwarning("Generic Error", "Something has broken")
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
 
@@ -500,140 +586,266 @@ def substitutionDecrypt(ciphertext):
     return plaintext
 # ---------------------------------------------------------------#
 """
-    Purpose: changes password of user based on the uid provided
-    Requirement: there is a given uid and has a valid user and the password is not null
-    Promise: change only the password of the user with the given uid
+    Purpose: changes password of user based on the UID provided
+    Requirement: there is a given UID and has a valid user and the password is not null
+    Promise: change only the password of the user with the given UID
 """
 # ---------------------------------------------------------------#
 def changePassword():
+    if not passwordBox.get() or not UIDBox.get():
+        messagebox.showwarning("Password or UID empty","Cannot change password without password and UID provided")
+        return
     password=passwordBox.get()
-    uid=uidBox.get()# simple get function from Entry boxes, takes in whatever was the user input into the uid box
-    
+    UID=UIDBox.get()# simple get function from Entry boxes, takes in whatever was the user input into the UID box
+    if pipeCheck(password):
+        messagebox.showwarning("Password Pipe","Password cannot contain the pipe character, |")
+        return
+
     credentialsFile = open("credentials.txt", "r")
+    if os.name == 'nt':
+        os.system('copy credentials.txt backupcredentials.txt')
+    elif os.name == 'posix':
+        os.system('cp credentials.txt backupcredentials.txt')
+    
+    UIDExists=False
+    try:
+        for line in credentialsFile:
+            line = line.split("|", 2)
+            if UID == line[2].replace('\n', ''):
+                UIDExists=True
+            UID=line[2].replace('\n', '')
+            newUID= int(UID)+1
+    except UnboundLocalError:
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+    except:
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
+    credentialsFile.close()
+
+    if not UIDExists:
+        messagebox.showwarning("UID Does Not Exist","UID does not exist, verify input")
+        return
+    
+    newUID="0"
     newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
-    newuid="0"
-    if password=="":#verify the user input was not null for password or uid (it would be bad to have a null password and no user specified means it is an unnecessary operation)
-        return
-    if uid=="":
-        return
-    for line in credentialsFile:
-        line = line.split("|", 2) #the pipe is the seperator that I use in the user/pass/uid file
-        if uid == line[2].replace('\n', ''): #newlines bad >:(, only change the password for the person with specified uid
-            line[1] = password
-        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n") #put the file back together
-        newuid= int(line[2])+1 #keep the uids incrementing each time but also not break 
+    try:
+        for line in credentialsFile:
+            line = line.split("|", 2) #the pipe is the seperator that I use in the user/pass/UID file
+            if UID == line[2].replace('\n', ''): #newlines bad >:(, only change the password for the person with specified UID
+                line[1] = password
+            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newUID) + "\n") #put the file back together
+            newUID= int(line[2])+1 #keep the UIDs incrementing each time but also not break 
+    except UnboundLocalError:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+    except:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
     
     newCredentialsFile.close() #close the document
     credentialsFile.close() #close the document
-    os.remove("credentials.txt")# removes the file credentials txt to free up the name
+    os.remove("credentials.txt")
+    os.remove("backupcredentials.txt")# removes the file credentials txt to free up the name
     os.rename("newcredentials.txt", "credentials.txt")# renames the newly written credentials file to the original name
 # ---------------------------------------------------------------#
 """
-    Purpose: changes username of user based on the uid provided
-    Requirement: there is a given uid and has a valid user and the username is not null
-    Promise: change only the username of the user with the given uid
+    Purpose: changes username of user based on the UID provided
+    Requirement: there is a given UID and has a valid user and the username is not null
+    Promise: change only the username of the user with the given UID
 """
 # ---------------------------------------------------------------#
 def changeUsername():
+    if not usernameBox.get() or not UIDBox.get():
+        messagebox.showwarning("Username or UID empty","Cannot change username without username and UID provided")
+        return
     username=usernameBox.get()
-    uid=uidBox.get()
-    
+    UID=UIDBox.get()
+
+    if pipeCheck(username):
+        messagebox.showwarning("Username Pipe","Username cannot contain the pipe character, |")
+        return
+
     credentialsFile = open("credentials.txt", "r")
     newCredentialsFile = open("newcredentials.txt", "a") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
-    newuid="0"
-    if username=="": 
-        return
-    if uid=="":
-        return
-    for line in credentialsFile:
-        line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/uid file
-        if uid == line[2].replace('\n', ''): #newlines bad >:(, only change the username for the person with specified uid
-            line[0] = username
-        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n") #put the file back together
-        newuid= int(line[2])+1 #keep the uids incrementing each time but also not break 
+    newUID="0"
+
+    try:
+        for line in credentialsFile:
+            line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/UID file
+            if UID == line[2].replace('\n', ''): #newlines bad >:(, only change the username for the person with specified UID
+                line[0] = username
+            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newUID) + "\n") #put the file back together
+            newUID= int(line[2])+1 #keep the UIDs incrementing each time but also not break 
+    except UnboundLocalError:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+    except:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
     
     newCredentialsFile.close()
     credentialsFile.close()
-    os.remove("credentials.txt")
-    os.rename("newcredentials.txt", "credentials.txt")
+    
+    try:
+        os.remove("credentials.txt")
+        os.remove("backupcredentials.txt")
+        os.rename("newcredentials.txt", "credentials.txt")
+    except:
+        messagebox.showwarning("Generic Error", "File deletion failed somehow, probably not an issue")
 # ---------------------------------------------------------------#
 """
-    Purpose: make new user and automatically assign it a uid
+    Purpose: make new user and automatically assign it a UID
     Requirement: have a unique username and a not null password
     Promise: add user with given details to credentials.txt file
 """
 # ---------------------------------------------------------------#
 def newUser():
+    if not usernameBox.get() or not passwordBox.get():
+        messagebox.showwarning("Username or Password Empty","Cannot add user without both a username and a password")
+        return
     password=passwordBox.get()
     username=usernameBox.get()
-
-    credentialsFile = open("credentials.txt", "r") #make sure the username & password are not null
-    if username == "":
-        credentialsFile.close()
+    if pipeCheck(password):
+        messagebox.showwarning("Password Pipe","Password cannot contain the pipe character, |")
         return
-    if password == "":
-        credentialsFile.close()
-        return
-    for line in credentialsFile:
-        line = line.split("|", 2)
-        if username == line[0].replace('\n', ''): #if the username is already taken do nothing
-            return
-        uid=line[2].replace('\n', '')
-    credentialsFile.close()
 
-    newuid= int(uid)+1
+    if pipeCheck(username):
+        messagebox.showwarning("Username Pipe","Username cannot contain the pipe character, |")
+        return
+
+    if usernameExists(username):
+        messagebox.showwarning("Bad Username", "Username already exists")
+        return
+    
+    newUID=int(UIDBox.get()) + 1
     credentialsFile = open("credentials.txt", "a") #now actually write in the new user since its all good
-    credentialsFile.write(username + "|" + password + "|" + str(newuid) + "\n")    
+    try:
+        credentialsFile.write(username + "|" + password + "|" + str(newUID) + "\n")
+    except:
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
     credentialsFile.close()
 # ---------------------------------------------------------------#
 """
-    Purpose: remove user from credentials.txt file based on uid
+    Purpose: remove user from credentials.txt file based on UID
     Requirement: press remove user button
-    Promise: remove user with given uid from credentials.txt and reordering the following users which will change all the uid
+    Promise: remove user with given UID from credentials.txt and reordering the following users which will change all the UID
 """
 # ---------------------------------------------------------------#
 def removeuser():
+    if not usernameBox.get() and not UIDBox.get():
+        messagebox.showwarning("Username and UID Empty","Cannot remove user when no username or UID provided")
+        return
     username=usernameBox.get()
-    uid=uidBox.get()
+    UID=UIDBox.get()
     
+    if pipeCheck(username):
+        messagebox.showwarning("Username Pipe","Username cannot contain the pipe character, |")
+        return
+
     credentialsFile = open("credentials.txt", "r")
-    newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
-    newuid="0"
+    if os.name == 'nt':
+        os.system('copy credentials.txt backupcredentials.txt')
+    elif os.name == 'posix':
+        os.system('cp credentials.txt backupcredentials.txt')
+
+    if not usernameExists(username):
+        messagebox.showwarning("Bad Username", "Username does not exist")
+        return
+    newUID="0"
     replacedUsers=0
-    for line in credentialsFile:
-        line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/uid file
-        if uid == line[2].replace('\n', '') or username == line[0].replace("\n", ""): #newlines bad >:(, only remove user with specified uid or specified username
-            newuid= int(line[2])
-            replacedUsers+=1
-        else:
-            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newuid) + "\n")#put the file back together
-            
-        newuid= int(line[2]) + 1 - replacedUsers #keep the uids incrementing each time but also not break, now accounting for the users removed, this was the easiest solution I could think of
+    
+    newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
+    try:
+        for line in credentialsFile:
+            line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/UID file
+            if UID == line[2].replace('\n', '') or username == line[0].replace("\n", ""): #newlines bad >:(, only remove user with specified UID or specified username
+                newUID= int(line[2])
+                replacedUsers+=1
+            else:
+                newCredentialsFile.write(line[0] + "|" + line[1] + "|" + str(newUID) + "\n")#put the file back together
+
+            newUID= int(line[2]) + 1 - replacedUsers #keep the UIDs incrementing each time but also not break, now accounting for the users removed, this was the easiest solution I could think of
+    except UnboundLocalError:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+    except:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
     
     newCredentialsFile.close()
     credentialsFile.close()
-    os.remove("credentials.txt")
-    os.rename("newcredentials.txt", "credentials.txt")
+    
+    try:
+        os.remove("credentials.txt")
+        os.remove("backupcredentials.txt")
+        os.rename("newcredentials.txt", "credentials.txt")
+    except:
+        messagebox.showwarning("Generic Error", "File deletion failed somehow, probably not an issue")
 
 def getUID():
+    if not usernameBox.get():
+        messagebox.showwarning("Username Empty","UID cannot be returned from nothing")
+        return
     username=usernameBox.get()
-    uid=uidBox.get()
-    
+
+    if not usernameExists(username):
+        messagebox.showwarning("Bad Username", "Username does not exist")
+        return
     credentialsFile = open("credentials.txt", "r")
+    if os.name == 'nt':
+        os.system('copy credentials.txt backupcredentials.txt')
+    elif os.name == 'posix':
+        os.system('cp credentials.txt backupcredentials.txt')
     newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
-    for line in credentialsFile:
-        line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/uid file
-        if username == line[0].replace('\n', ''): #newlines bad >:(, only remove user with specified uid or specified username
-            uid= int(line[2])
+    try:
+        for line in credentialsFile:
+            line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/UID file
+        if username == line[0].replace('\n', ''): #newlines bad >:(, only remove user with specified UID or specified username
+            UID = int(line[2])
             newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2].replace('\n', '') + "\n")
         else:
             newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2].replace('\n', '') + "\n")#put the file back together
-    uidBox.delete(0, "end")
-    uidBox.insert(0, uid)
+            UIDBox.delete(0, "end")
+            UIDBox.insert(0, UID)
+    except UnboundLocalError:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+    except:
+        if os.name == 'nt':
+            os.system('copy backupcredentials.txt credentials.txt')
+        elif os.name == 'posix':
+            os.system('cp backupcredentials.txt credentials.txt')
+        messagebox.showwarning("Generic Error","Verify user inputs are accurate")
+    
     newCredentialsFile.close()
     credentialsFile.close()
-    os.remove("credentials.txt")
-    os.rename("newcredentials.txt", "credentials.txt")
+    
+    try:
+        os.remove("credentials.txt")
+        os.remove("backupcredentials.txt")
+        os.rename("newcredentials.txt", "credentials.txt")
+    except:
+        messagebox.showwarning("Generic Error", "File deletion failed somehow, probably not an issue")
 
 # ---------------------------------------------------------------#
 """
@@ -673,12 +885,12 @@ if ls.start():
     ciphertextLabel=customtkinter.CTkLabel(window, text="Ciphertext:")
     ciphertextBox=customtkinter.CTkTextbox(window, height=3)
 
-    usernameBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #username/password/uid boxes and labels
+    usernameBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #username/password/UID boxes and labels
     passwordBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
-    uidBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
+    UIDBox=customtkinter.CTkEntry(window, textvariable="", justify="left")
     usernameLabel=customtkinter.CTkLabel(window, text="Username:")
     passwordLabel=customtkinter.CTkLabel(window, text="Password:")
-    uidLabel=customtkinter.CTkLabel(window, text="UID:")
+    UIDLabel=customtkinter.CTkLabel(window, text="UID:")
 
     encryptButton=customtkinter.CTkButton(window, text="Encrypt", fg_color="#d833de") #enc/dec buttons
     decryptButton=customtkinter.CTkButton(window, text="Decrypt", fg_color="#d833de")

@@ -125,3 +125,12 @@ implemented customtkinter, looks beautiful now but can still be refined
 16/05/2025
 keys autogenerate for caeser trifid and rsa now on encrypt
 getuid button now exists and works, GUI refined for the user management section, much cleaner now
+
+error handling implemented, possibly everything now covered, if anything else breaks, I will need to look into it
+alright more error handling was implemented, should probably log generic errors instead of just catching them
+moved code parcels into functions when I call it a bunch
+backup file made when handling user changes to avoid accidentally breaking the entire credentials.txt list
+also probably did something else, not sure, that was a lot of editing
+
+Gonna move the encryption programs to their own file/files tomorrow
+following this will finally implement a hashed version of the assessment, mostly for practice and allowing the company to view operations done in parallel with the different versions
