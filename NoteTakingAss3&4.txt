@@ -134,3 +134,8 @@ also probably did something else, not sure, that was a lot of editing
 
 Gonna move the encryption programs to their own file/files tomorrow
 following this will finally implement a hashed version of the assessment, mostly for practice and allowing the company to view operations done in parallel with the different versions
+
+got bored,
+implemented with open to avoid crashing or other issues and reliably closing files
+moved files out to their own
+overall neatened up the code

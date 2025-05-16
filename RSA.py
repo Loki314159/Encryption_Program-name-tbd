@@ -9,9 +9,8 @@
 # This imports the various portions of the Crypto Library for use in the program.
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-import base64
-
-
+import base64 as b64
+from tkinter import messagebox
 def makeRSAKey():
     """Generates a new RSA Key pair."""
 
@@ -29,7 +28,7 @@ def encryptRSA(plainText, publicKey):
     cipher = PKCS1_OAEP.new(Key)  # Create an RSA cipher with OAEP padding
     cipherText = cipher.encrypt(plainText.encode('utf-8'))  # Encrypt the text
 
-    return base64.b64encode(cipherText).decode('utf-8')  # Encode the result in base64
+    return b64.b64encode(cipherText).decode('utf-8')  # Encode the result in base64
 
 
 def decryptRSA(cipherText, privateKey):
@@ -37,11 +36,36 @@ def decryptRSA(cipherText, privateKey):
 
     Key = RSA.import_key(privateKey)  # Import the private key
     cipher = PKCS1_OAEP.new(Key)  # Create an RSA cipher with OAEP padding
-    decoded = base64.b64decode(cipherText.encode('utf-8'))  # Decode the base64 input
+    decoded = b64.b64decode(cipherText.encode('utf-8'))  # Decode the base64 input
     plainText = cipher.decrypt(decoded).decode('utf-8')  # Decrypt and convert to a string
 
     return plainText  # Return the original text
 
+def RSAPubEncrypt(publicKey, plaintext):
+    blockSize = 200 # specifies how large a text can be in characters before it will be split into another chunk
+    ciphertext=""
+    splitPlaintext = [plaintext[i:i+blockSize] for i in range(0, len(plaintext), blockSize)] #https://www.geeksforgeeks.org/python-divide-string-into-equal-k-chunks/
+    #^ this allows RSA to be performed on text of any length given the valid characters sizes, after testing it broke with 214 bytes of text and not with 213, all valid characters are 1 byte so just chars = bytes and 200 seems fine
+    for i in splitPlaintext:
+        try:
+            ciphertext+= encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts as a delineator because it will not appear in encrypted RSA ever
+        except Exception as e:
+            messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+    return ciphertext
+
+def RSAPrivDecrypt(privateKey, ciphertext):
+    try:
+        cipherList=ciphertext.split("♥♥♥♥♥") #take apart the ciphertext that was crafted and then perform the decryption
+    except:
+        messagebox.showwarning("Generic Error", "Something has broken, ciphertext likely incorrectly formatted or broken")
+    plaintext=""
+    for i in cipherList:
+        if i != "": #null part would make it break, this stops that
+            try:
+                plaintext+=decryptRSA(i, privateKey) #stitch back all of the pieces together
+            except Exception as e:
+                messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+    return plaintext
 
 # Example Usage
 def main():
