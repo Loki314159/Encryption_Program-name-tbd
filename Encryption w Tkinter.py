@@ -6,6 +6,7 @@ import RSA as rsa
 import LoginScreenLite as ls
 import os
 import customtkinter
+import random
 # ---------------------------------------------------------------#
 """
     Purpose: clear out all the buttons for each encryption method
@@ -40,6 +41,8 @@ def forgetAll():
     uidBox.grid_forget()
     uidLabel.grid_forget()
     removeUserButton.grid_forget()
+    getUIDButton.grid_forget()
+    
 # ---------------------------------------------------------------#
 """
     Purpose: make all buttons light blue to allow the focused method be turned dark blue and focused
@@ -65,11 +68,29 @@ def RSAGenKeys():
     if privateKeyBox.get() and publicKeyBox.get():
         return privateKeyBox.get(), publicKeyBox.get()
     privateKey, publicKey = rsa.makeRSAKey()
-    privateKeyBox.delete(0, customtkinter.CTkEND)# this will delete everything in the Entry box from the start (0) to the end (customtkinter.CTkEND)
+    privateKeyBox.delete(0, "end")# this will delete everything in the Entry box from the start (0) to the end
     privateKeyBox.insert(0, privateKey)# this will place the privateKey in the privatekeybox at the start (0)
-    publicKeyBox.delete(0, customtkinter.CTkEND)
+    publicKeyBox.delete(0, "end")
     publicKeyBox.insert(0, publicKey)
     return privateKey, publicKey # returns both keys to the operation that called the function
+
+def trifidGenKeys():
+    if keyBox.get():
+        return keyBox.get()
+    key = list(""" !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ\n""")
+    random.shuffle(key)
+    key=''.join(key)
+    keyBox.delete(0, "end")# this will delete everything in the key box from the start (0) to the end
+    keyBox.insert(0, key.replace("\n", "♥"))# this will place the key in the key box at the start (0)
+    return key
+
+def caeserGenShift():
+    if shiftBox.get():
+        return int(shiftBox.get())
+    randNum=random.randint(0, 999)
+    shiftBox.delete(0, "end")# this will delete everything in the Entry box from the start (0) to the end
+    shiftBox.insert(0, randNum)# this will place the shift in the shift box at the start (0)
+    return randNum
 # ---------------------------------------------------------------#
 """
     Purpose: Remove the newline character at the end of an input parsed through a Text widget, this is not needed for user inputs from Entry widgets
@@ -203,30 +224,44 @@ def changeDetails():
     uidBox.grid(column=1, row=2)
     uidLabel.grid(column=1, row=2, sticky="nw")
     
-    changePasswordButton.grid(column="1", row="3", sticky="n")
-    changeUsernameButton.grid(column="1", row="3", sticky="s")
-    newUserButton.grid(column="1", row="4", sticky="n")
-    removeUserButton.grid(column="1", row="4", sticky="s")
+    changePasswordButton.grid(column="1", row="3", sticky="new")
+    changeUsernameButton.grid(column="1", row="3", sticky="sew")
+    getUIDButton.grid(column="1", row="3", sticky="ew")
+    newUserButton.grid(column="1", row="4", sticky="new")
+    removeUserButton.grid(column="1", row="4", sticky="ew")
 
+# ---------------------------------------------------------------#
+"""
+    Purpose: 
+    Requirement: 
+    Promise: 
+"""
+# ---------------------------------------------------------------#
 def encryptCredsFile():
     credentialsFile = open("credentials.txt", "r")
     newCredentialsFile = open("newcredentials.txt", "w")
 
 # ---------------------------------------------------------------#
 """
-    Purpose: Encrypt plaintext with trifid method
-    Requirement: Encrypt button be pressed, there is a plaintext to encrypt, key is 125 characters and all characters in the plaintext are also in the key
-    Promise: place encrypted plaintext in ciphertext box
+    Purpose: call the trifidEncrypt function and pass is text from the plaintext box and the key from the key box
+    Requirement: Encrypt button be pressed
+    Promise: insert encrypted text into the ciphertext box
 """
 # ---------------------------------------------------------------#
 def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
     ciphertext=""   # example key^^^
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end")) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
-    key=keyBox.get()
+    key=trifidGenKeys()
     ciphertext = trifidEncrypt(key, plaintext)
     ciphertextBox.delete("0.0", "end") # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
     ciphertextBox.insert("0.0", ciphertext) # similar difference here, just inserts ciphertext
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Encrypt plaintext with trifid method
+    Requirement: called, there is a plaintext to encrypt, key is 125 characters and all characters in the plaintext are also in the key
+    Promise: place encrypted plaintext in ciphertext box
+"""
+# ---------------------------------------------------------------#
 def trifidEncrypt(key, plaintext):
     plainList=list(plaintext)
     keyList=list(key.replace("♥","\n")) #allows keys to have ♥ instead of newline character, purely a cosmetic choice
@@ -260,7 +295,7 @@ def trifidEncrypt(key, plaintext):
 """
 # ---------------------------------------------------------------#
 def callCaesarEncrypt():
-    shift=int(shiftBox.get()) #grab key and make sure I can do math with it
+    shift=caeserGenShift() #grab key and make sure I can do math with it
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=caesarEncrypt(shift, plaintext)
     ciphertextBox.delete("0.0", "end")
@@ -271,7 +306,10 @@ def caesarEncrypt(shift, plaintext):
     plainNumbers=[]
     asciiList=list(''' !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ\n''')
     for i in plaintext:
-        plainNumbers.append(asciiList.index(i)) #using the list I provide, shift the letters around, this list can be configured at will
+        try:
+            plainNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
+        except ValueError:
+            raise ValueError(f"Character {repr(i)} not in asciiList")
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
         ciphertext+=asciiList[i%len(asciiList)] #swaps out the numbers for their respective character found in the asciilist (the mod operator prevents out of bound requests)
@@ -393,7 +431,10 @@ def caesarDecrypt(shift, ciphertext):
     cipherNumbers=[]
     plaintext=""
     for i in ciphertext:
-        cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
+        try:
+            cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
+        except ValueError:
+            raise ValueError(f"Character {repr(i)} not in asciiList")
     plainNumbers = [x-shift for x in cipherNumbers] #use negative shift to all characters in plaintext because it is decryption
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
@@ -574,6 +615,26 @@ def removeuser():
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
 
+def getUID():
+    username=usernameBox.get()
+    uid=uidBox.get()
+    
+    credentialsFile = open("credentials.txt", "r")
+    newCredentialsFile = open("newcredentials.txt", "w") #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
+    for line in credentialsFile:
+        line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/uid file
+        if username == line[0].replace('\n', ''): #newlines bad >:(, only remove user with specified uid or specified username
+            uid= int(line[2])
+            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2].replace('\n', '') + "\n")
+        else:
+            newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2].replace('\n', '') + "\n")#put the file back together
+    uidBox.delete(0, "end")
+    uidBox.insert(0, uid)
+    newCredentialsFile.close()
+    credentialsFile.close()
+    os.remove("credentials.txt")
+    os.rename("newcredentials.txt", "credentials.txt")
+
 # ---------------------------------------------------------------#
 """
     Purpose: check if user has valid credentials before initialising program
@@ -619,13 +680,14 @@ if ls.start():
     passwordLabel=customtkinter.CTkLabel(window, text="Password:")
     uidLabel=customtkinter.CTkLabel(window, text="UID:")
 
-    encryptButton=customtkinter.CTkButton(window, text="Encrypt", fg_color="hotpink") #enc/dec buttons
-    decryptButton=customtkinter.CTkButton(window, text="Decrypt", fg_color="hotpink")
+    encryptButton=customtkinter.CTkButton(window, text="Encrypt", fg_color="#d833de") #enc/dec buttons
+    decryptButton=customtkinter.CTkButton(window, text="Decrypt", fg_color="#d833de")
 
-    changePasswordButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#3f5799", command= changePassword, text="changePassword", text_color="black") #buttons that call their namesake function
-    changeUsernameButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#3f5799", command= changeUsername, text="changeUsername", text_color="black")# everything other than the command is cosmetic
-    newUserButton=customtkinter.CTkButton(window, height=1, width=11, border_width=1, fg_color="#3f5799", command= newUser, text="newUser", text_color="black")
-    removeUserButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#3f5799", command= removeuser, text="removeuser", text_color="black")
+    changePasswordButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#d833de", command= changePassword, text="changePassword", text_color="black", corner_radius=2, border_spacing=10) #buttons that call their namesake function
+    changeUsernameButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#d833de", command= changeUsername, text="changeUsername", text_color="black", corner_radius=2, border_spacing=10)# everything other than the command is cosmetic
+    newUserButton=customtkinter.CTkButton(window, height=1, width=11, border_width=1, fg_color="#d833de", command= newUser, text="newUser", text_color="black", corner_radius=2, border_spacing=10)
+    removeUserButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#d833de", command= removeuser, text="removeuser", text_color="black", corner_radius=2, border_spacing=10)
+    getUIDButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#d833de", command= getUID, text="getUID", text_color="black", corner_radius=2, border_spacing=10)
 
     keyBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #trifid key box/label, independant because that way it is kept when using other methods
     keyLabel=customtkinter.CTkLabel(window, text="Key:")

@@ -121,3 +121,7 @@ actually gonna implement the encryption decryption of the creds tmrw and work on
 14/05/2025
 implemented customtkinter, looks beautiful now but can still be refined
 (haven't encrypted the creds file yet)
+
+16/05/2025
+keys autogenerate for caeser trifid and rsa now on encrypt
+getuid button now exists and works, GUI refined for the user management section, much cleaner now
