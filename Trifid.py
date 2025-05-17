@@ -29,10 +29,13 @@ def trifidEncrypt(key, plaintext):
         ciphertext="".join(cipherList)
     except ValueError:
         messagebox.showwarning("Value Error","Key too large or too small")
+        return
     except IndexError:
         messagebox.showwarning("Index Error","Character in plaintext that is not in the key")
+        return
     except Exception as e:
-                messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        return
     return ciphertext
 
 def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
@@ -58,8 +61,11 @@ def trifidDecrypt(key, ciphertext): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJ
         
     except ValueError:
         messagebox.showwarning("Value Error","Key too large or too small")
+        return
     except IndexError:
         messagebox.showwarning("Index Error","Character in plaintext that is not in the key")
+        return
     except Exception as e:
-                messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        return
     return plaintext

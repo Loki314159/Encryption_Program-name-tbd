@@ -62,17 +62,31 @@ def blueButtons():
 
 def usernameExists(username):
     with open("credentials.txt", "r") as credentialsFile:
-        usernameExists=False
         try:
             for line in credentialsFile:
                 line = line.split("|", 2)
                 if username == line[0].replace('\n', ''):
-                    usernameExists=True
+                    return True
         except UnboundLocalError:
             messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
         except Exception as e:
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
-    return usernameExists
+    return False
+
+def UIDExists(UID):
+    with open("credentials.txt", "r") as credentialsFile:
+        try:
+            for line in credentialsFile:
+                line = line.split("|", 2)
+                if UID == line[2].replace('\n', ''):
+                    return True
+        except UnboundLocalError:
+            messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+            return  False
+        except Exception as e:
+            messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+            return False
+        return False
 
 def pipeCheck(text):
     for i in text:
@@ -444,43 +458,28 @@ def changePassword():
 
     shutil.copyfile('credentials.txt','backupcredentials.txt')
     
-    UIDExists=False
-    with open("credentials.txt", "r") as credentialsFile:
-        try:
-            for line in credentialsFile:
-                line = line.split("|", 2)
-                if UID == line[2].replace('\n', ''):
-                    UIDExists=True
-                UID=line[2].replace('\n', '')
-        except UnboundLocalError:
-            messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
-        except Exception as e:
-            messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
-    
-
-    if not UIDExists:
+    if not UIDExists(UID):
         messagebox.showwarning("UID Does Not Exist","UID does not exist, verify input")
         return
     
-    with open("newcredentials.txt", "w") as newCredentialsFile: #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
-        try:
-            for line in credentialsFile:
-                line = line.split("|", 2) #the pipe is the seperator that I use in the user/pass/UID file
-                if UID == line[2].replace('\n', ''): #newlines bad >:(, only change the password for the person with specified UID
-                    line[1] = password
-                newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2] + "\n") #put the file back together
-        except UnboundLocalError:
-            if os.name == 'nt':
-                os.system('copy backupcredentials.txt credentials.txt')
-            elif os.name == 'posix':
-                os.system('cp backupcredentials.txt credentials.txt')
-            messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
-        except Exception as e:
-            if os.name == 'nt':
-                os.system('copy backupcredentials.txt credentials.txt')
-            elif os.name == 'posix':
-                os.system('cp backupcredentials.txt credentials.txt')
-            messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+    try:
+        with open("credentials.txt", "r") as credentialsFile:
+            with open("newcredentials.txt", "w") as newCredentialsFile: #write will automatically create file if it doesnt exist already (which it shouldn't) and if it does, it truncates it and its fine
+                for line in credentialsFile:
+                    line = line.split("|", 2) #the pipe is the seperator that I use in the user/pass/UID file
+                    if UID == line[2].replace('\n', ''): #newlines bad >:(, only change the password for the person with specified UID
+                        line[1] = password
+                        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2])
+                    else:
+                        newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2]) #put the file back together
+    except UnboundLocalError:
+        shutil.copyfile('backupcredentials.txt', 'credentials.txt')
+        messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+        return
+    except Exception as e:
+        shutil.copyfile('backupcredentials.txt', 'credentials.txt')
+        messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        return
     
     os.remove("credentials.txt")
     os.remove("backupcredentials.txt")# removes the file credentials txt to free up the name
@@ -512,13 +511,15 @@ def changeUsername():
                     line = line.split("|", 2)#the pipe is the seperator that I use in the user/pass/UID file
                     if UID == line[2].replace('\n', ''): #newlines bad >:(, only change the username for the person with specified UID
                         line[0] = username
-                    newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2] + "\n") #put the file back together
+                    newCredentialsFile.write(line[0] + "|" + line[1] + "|" + line[2]) #put the file back together
             except UnboundLocalError:
                 shutil.copyfile('backupcredentials.txt', 'credentials.txt')
                 messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+                return
             except Exception as e:
                 shutil.copyfile('backupcredentials.txt', 'credentials.txt')
                 messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+                return
 
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
@@ -579,12 +580,10 @@ def removeuser():
     if pipeCheck(username):
         messagebox.showwarning("Username Pipe","Username cannot contain the pipe character, |")
         return
-
-
     shutil.copyfile('credentials.txt','backupcredentials.txt')
 
-    if not usernameExists(username):
-        messagebox.showwarning("Bad Username", "Username does not exist")
+    if not usernameExists(username) and not UIDExists(UID):
+        messagebox.showwarning("Bad Username and UID", "Username and UID do not exist")
         return
 
     newUID="0"
@@ -604,9 +603,11 @@ def removeuser():
             except UnboundLocalError:
                 shutil.copyfile('backupcredentials.txt', 'credentials.txt')
                 messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+                return
             except Exception as e:
                 shutil.copyfile('backupcredentials.txt', 'credentials.txt')
                 messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+                return
 
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
@@ -635,13 +636,15 @@ def getUID():
         except UnboundLocalError:
             shutil.copyfile('backupcredentials.txt', 'credentials.txt')
             messagebox.showwarning("Unbound Local Error","Verify user inputs are accurate")
+            return
         except IndexError:
             shutil.copyfile('backupcredentials.txt', 'credentials.txt')
             messagebox.showwarning("Index Error","credentials.txt likely broken, please investigate")
+            return
         except Exception as e:
             shutil.copyfile('backupcredentials.txt', 'credentials.txt')
-            messagebox.showwarning("Index Error","credentials.txt likely broken, please investigate")
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+            return
 
 # ---------------------------------------------------------------#
 """

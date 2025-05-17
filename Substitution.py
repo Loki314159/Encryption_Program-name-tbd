@@ -7,6 +7,7 @@ def substitutionEncrypt(plaintext):
             ciphertext+=(str(ord(i)) + " ") #combine and get all the ascii values for the plaintext 
         except Exception as e:
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+            return
     return ciphertext
 
 def substitutionDecrypt(ciphertext):
@@ -17,4 +18,5 @@ def substitutionDecrypt(ciphertext):
             plaintext+=chr(int(i))
     except Exception as e:
         messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        return
     return plaintext

@@ -6,6 +6,7 @@ def base64Encrypt(plaintext):
         ciphertext=b64.b64encode(plaintext.encode()).decode("ascii") #turn plaintext into base 64
     except Exception as e:
         messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        return
     return ciphertext
 
 def base64Decrypt(ciphertext):
@@ -15,4 +16,5 @@ def base64Decrypt(ciphertext):
         messagebox.showwarning("Value Error","string argument should contain only ASCII characters")
     except Exception as e:
         messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+        return
     return plaintext

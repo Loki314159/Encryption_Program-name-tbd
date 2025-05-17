@@ -51,6 +51,7 @@ def RSAPubEncrypt(publicKey, plaintext):
             ciphertext+= encryptRSA(i, publicKey) + "♥♥♥♥♥" #using hearts as a delineator because it will not appear in encrypted RSA ever
         except Exception as e:
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+            return
     return ciphertext
 
 def RSAPrivDecrypt(privateKey, ciphertext):
@@ -65,6 +66,7 @@ def RSAPrivDecrypt(privateKey, ciphertext):
                 plaintext+=decryptRSA(i, privateKey) #stitch back all of the pieces together
             except Exception as e:
                 messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+                return
     return plaintext
 
 # Example Usage

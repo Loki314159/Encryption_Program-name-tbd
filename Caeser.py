@@ -8,8 +8,10 @@ def caesarEncrypt(shift, plaintext):
             plainNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
         except ValueError:
             messagebox.showwarning("Value Error",f"Bad character, {repr(i)} not in asciiList")
+            return
         except Exception as e:
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+            return
     cipherNumbers = [x+shift for x in plainNumbers] #add shift to all characters in plaintext
     for i in cipherNumbers:
         ciphertext+=asciiList[i%len(asciiList)] #swaps out the numbers for their respective character found in the asciilist (the mod operator prevents out of bound requests)
@@ -24,8 +26,10 @@ def caesarDecrypt(shift, ciphertext):
             cipherNumbers.append(asciiList.index(i))#using the list I provide, shift the letters around, this list can be configured at will
         except ValueError:
             messagebox.showwarning("Value Error",f"Character {repr(i)} not in asciiList")
+            return
         except Exception as e:
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
+            return
     plainNumbers = [x-shift for x in cipherNumbers] #use negative shift to all characters in plaintext because it is decryption
     for i in plainNumbers:
         plaintext+=asciiList[i%len(asciiList)] #using % to avoid shifts too large being a problem
