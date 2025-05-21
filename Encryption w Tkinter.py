@@ -2,6 +2,7 @@ from tkinter import messagebox
 import LoginScreenLite as ls
 import os
 import customtkinter
+import pyperclip
 import random
 import shutil
 import Trifid as trfd
@@ -53,12 +54,12 @@ def forgetAll():
 """
 # ---------------------------------------------------------------#
 def blueButtons():
-    trifidButton.configure(fg_color="#3f5799", text_color="black")
-    caesarButton.configure(fg_color="#3f5799", text_color="black")
-    RSAButton.configure(fg_color="#3f5799", text_color="black")
-    b64Button.configure(fg_color="#3f5799", text_color="black")
-    substitutionButton.configure(fg_color="#3f5799", text_color="black")
-    changeDetailsButton.configure(fg_color="#3f5799", text_color="black")
+    trifidButton.configure(text_color="black")
+    caesarButton.configure(text_color="black")
+    RSAButton.configure(text_color="black")
+    b64Button.configure(text_color="black")
+    substitutionButton.configure(text_color="black")
+    changeDetailsButton.configure(text_color="black")
 
 def usernameExists(username):
     with open("credentials.txt", "r") as credentialsFile:
@@ -281,6 +282,7 @@ def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTU
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end")) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
     key=trifidGenKeys()
     ciphertext = trfd.trifidEncrypt(key, plaintext)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
     ciphertextBox.delete("0.0", "end") # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
     ciphertextBox.insert("0.0", ciphertext) # similar difference here, just inserts ciphertext
 # ---------------------------------------------------------------#
@@ -297,6 +299,7 @@ def callCaesarEncrypt():
     shift=caeserGenShift() #grab key and make sure I can do math with it
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=csr.caesarEncrypt(shift, plaintext)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -313,6 +316,7 @@ def callRSAPubEncrypt():
     privateKey, publicKey = RSAGenKeys()
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext = rsa.RSAPubEncrypt(publicKey, plaintext)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -329,6 +333,7 @@ def callBase64Encrypt():
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=mb64.base64Encrypt(plaintext)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -345,6 +350,7 @@ def callSubstitutionEncrypt():
     ciphertext=""
     plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
     ciphertext=sub.substitutionEncrypt(plaintext)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#

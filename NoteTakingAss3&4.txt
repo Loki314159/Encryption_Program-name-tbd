@@ -143,3 +143,7 @@ overall neatened up the code
 17/05/2025
 some errors fixed, should be good
 will need to go through and make sure everything is commented properly in the end
+
+18/05/2025
+
+copy ciphertext to clipboard when plaintext is encrypted
