@@ -147,3 +147,8 @@ will need to go through and make sure everything is commented properly in the en
 18/05/2025
 
 copy ciphertext to clipboard when plaintext is encrypted
+
+28/05/2025
+PRPs updated
+everything camelcase
+should be the last commit before submission
