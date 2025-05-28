@@ -1,0 +1,4 @@
+pyperclip
+customtkinter
+tk
+random

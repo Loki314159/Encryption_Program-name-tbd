@@ -45,22 +45,27 @@ def forgetAll():
     UIDLabel.grid_forget()
     removeUserButton.grid_forget()
     getUIDButton.grid_forget()
-
 # ---------------------------------------------------------------#
 """
-    Purpose: make all buttons light blue to allow the focused method be turned dark blue and focused
+    Purpose: make all buttons text turn black (resets the buttons graphically)
     Requirement: be called
     Promise: all buttons will be turned light blue
 """
 # ---------------------------------------------------------------#
-def blueButtons():
+def resetEncryptionButtons():
     trifidButton.configure(text_color="black")
     caesarButton.configure(text_color="black")
     RSAButton.configure(text_color="black")
     b64Button.configure(text_color="black")
     substitutionButton.configure(text_color="black")
     changeDetailsButton.configure(text_color="black")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Verify that a username exists within the current user database
+    Requirement: Pass in a username (intended to be used after a pipecheck but this is independent to avoid repetition)
+    Promise: return true when the username does exist
+"""
+# ---------------------------------------------------------------#
 def usernameExists(username):
     with open("credentials.txt", "r") as credentialsFile:
         try:
@@ -73,7 +78,13 @@ def usernameExists(username):
         except Exception as e:
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
     return False
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Verify that a UID exists within the current user database
+    Requirement: Pass in a UID (intended to be used after a pipecheck but this is independent to avoid repetition)
+    Promise: return true when the UID exists
+"""
+# ---------------------------------------------------------------#
 def UIDExists(UID):
     with open("credentials.txt", "r") as credentialsFile:
         try:
@@ -88,7 +99,13 @@ def UIDExists(UID):
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
             return False
         return False
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: make sure no | (pipe) characters are passed to the code to be compared with the existing database
+    Requirement: pass in some text to check
+    Promise: return true when a pipe is found
+"""
+# ---------------------------------------------------------------#
 def pipeCheck(text):
     for i in text:
         if i == "|":
@@ -97,8 +114,8 @@ def pipeCheck(text):
 # ---------------------------------------------------------------#
 """
     Purpose: Generate RSA keys using RSA.py provided in assessment files
-    Requirement: be called while encrypting/decrypting
-    Promise: generate RSA keys if there aren't any currently
+    Requirement: be called while encrypting/decrypting after no key passed in when hitting encrypt
+    Promise: generate RSA keys and inject the keys used into the UI for the user to copy paste it away
 """
 # ---------------------------------------------------------------#
 def RSAGenKeys():
@@ -110,7 +127,13 @@ def RSAGenKeys():
     publicKeyBox.delete(0, "end")
     publicKeyBox.insert(0, publicKey)
     return privateKey, publicKey # returns both keys to the operation that called the function
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Generate a random trifid key containing all necessary characters defined within scope
+    Requirement: no key passed in when hitting encrypt
+    Promise: generate a 125 character key and inject the key used into the UI for the user to copy paste it away
+"""
+# ---------------------------------------------------------------#
 def trifidGenKeys():
     if keyBox.get():
         return keyBox.get()
@@ -120,22 +143,28 @@ def trifidGenKeys():
     keyBox.delete(0, "end")# this will delete everything in the key box from the start (0) to the end
     keyBox.insert(0, key.replace("\n", "♥"))# this will place the key in the key box at the start (0)
     return key
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Generate a random integer caesar shift
+    Requirement: no shift passed in when hitting encrypt
+    Promise: generate an integer key and inject the shift used into the UI for the user to copy paste it away
+"""
+# ---------------------------------------------------------------#
 def caeserGenShift():
     if shiftBox.get():
         return int(shiftBox.get())
-    randNum=random.randint(0, 999)
+    randInt=random.randint(0, 999)
     shiftBox.delete(0, "end")# this will delete everything in the Entry box from the start (0) to the end
-    shiftBox.insert(0, randNum)# this will place the shift in the shift box at the start (0)
-    return randNum
+    shiftBox.insert(0, randInt)# this will place the shift in the shift box at the start (0)
+    return randInt
 # ---------------------------------------------------------------#
 """
-    Purpose: Remove the newline character at the end of an input parsed through a Text widget, this is not needed for user inputs from Entry widgets
-    Requirement: be called after parsing input from an Entry widget
+    Purpose: Remove the newline character at the end of an input parsed through a Text widget
+    Requirement: be called after parsing input from a textbox widget
     Promise: remove the unnecessary (sometimes problematic) newline character from inputs
 """
 # ---------------------------------------------------------------#
-def Textboxformatter(text):
+def textboxFormatter(text):
     alteredTextList=list(text) # turn the test into a list
     alteredTextList.pop(-1) # remove the final character (which will always be a newline)
     alteredText="".join(alteredTextList) # put the list back into being a string
@@ -149,7 +178,7 @@ def Textboxformatter(text):
 # ---------------------------------------------------------------#
 def trifid():
     forgetAll()
-    blueButtons()
+    resetEncryptionButtons()
     trifidButton.configure(fg_color="#3f5799", text_color="white")
     decryptButton.configure(command=callTrifidDecrypt)
     encryptButton.configure(command=callTrifidEncrypt)# changes the configuration of the button so that it calls the specified command
@@ -170,7 +199,7 @@ def trifid():
 # ---------------------------------------------------------------#
 def caesar():
     forgetAll()
-    blueButtons()
+    resetEncryptionButtons()
     caesarButton.configure(fg_color="#3f5799", text_color="white")
     decryptButton.configure(command=callCaesarDecrypt)
     encryptButton.configure(command=callCaesarEncrypt)
@@ -191,7 +220,7 @@ def caesar():
 # ---------------------------------------------------------------#
 def RSA():
     forgetAll()
-    blueButtons()
+    resetEncryptionButtons()
     RSAButton.configure(fg_color="#3f5799", text_color="white")
     decryptButton.configure(command=callRSAPrivDecrypt, text="Priv Decrypt")
     encryptButton.configure(command=callRSAPubEncrypt, text="Pub Encrypt")
@@ -214,7 +243,7 @@ def RSA():
 # ---------------------------------------------------------------#
 def base64():
     forgetAll()
-    blueButtons()
+    resetEncryptionButtons()
     b64Button.configure(fg_color="#3f5799", text_color="white")
     decryptButton.configure(command=callBase64Decrypt)
     encryptButton.configure(command=callBase64Encrypt)
@@ -233,7 +262,7 @@ def base64():
 # ---------------------------------------------------------------#
 def substitution():
     forgetAll()
-    blueButtons()
+    resetEncryptionButtons()
     substitutionButton.configure(fg_color="#3f5799", text_color="white")
     decryptButton.configure(command=callSubstitutionDecrypt)
     encryptButton.configure(command=callSubstitutionEncrypt)
@@ -252,7 +281,7 @@ def substitution():
 # ---------------------------------------------------------------#
 def changeDetails():
     forgetAll()
-    blueButtons()
+    resetEncryptionButtons()
     changeDetailsButton.configure(fg_color="#3f5799", text_color="white")
     usernameBox.grid(column=1, row=0)
     usernameLabel.grid(column=1, row=0, sticky="nw")
@@ -266,7 +295,6 @@ def changeDetails():
     getUIDButton.grid(column="1", row="3", sticky="ew")
     newUserButton.grid(column="1", row="4", sticky="new")
     removeUserButton.grid(column="1", row="4", sticky="ew")
-
 # ---------------------------------------------------------------#
 """
     Purpose: call the trifidEncrypt function and pass is text from the plaintext box and the key from the key box
@@ -275,14 +303,14 @@ def changeDetails():
 """
 # ---------------------------------------------------------------#
 def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼—½¿Ƚ♥
-    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+    if not textboxFormatter(plaintextBox.get("0.0", "end")):
         messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
         return
     ciphertext=""   # example key^^^
-    plaintext=Textboxformatter(plaintextBox.get("0.0", "end")) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
+    plaintext=textboxFormatter(plaintextBox.get("0.0", "end")) # gets the text from the plaintext Text field before removing the unnecessary newline character to avoid incorrect encryption
     key=trifidGenKeys()
     ciphertext = trfd.trifidEncrypt(key, plaintext)
-    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxFormatter to be neccessary)
     ciphertextBox.delete("0.0", "end") # the formatting to delete things from Text widgets is slightly different to Entry widgets as shown previously, this deletes everything in it
     ciphertextBox.insert("0.0", ciphertext) # similar difference here, just inserts ciphertext
 # ---------------------------------------------------------------#
@@ -293,13 +321,13 @@ def callTrifidEncrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTU
 """
 # ---------------------------------------------------------------#
 def callCaesarEncrypt():
-    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+    if not textboxFormatter(plaintextBox.get("0.0", "end")):
         messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
         return
     shift=caeserGenShift() #grab key and make sure I can do math with it
-    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
+    plaintext=textboxFormatter(plaintextBox.get("0.0", "end"))
     ciphertext=csr.caesarEncrypt(shift, plaintext)
-    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxFormatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -310,13 +338,13 @@ def callCaesarEncrypt():
 """
 # ---------------------------------------------------------------#
 def callRSAPubEncrypt():
-    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+    if not textboxFormatter(plaintextBox.get("0.0", "end")):
         messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
         return
     privateKey, publicKey = RSAGenKeys()
-    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
+    plaintext=textboxFormatter(plaintextBox.get("0.0", "end"))
     ciphertext = rsa.RSAPubEncrypt(publicKey, plaintext)
-    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxFormatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -327,13 +355,13 @@ def callRSAPubEncrypt():
 """
 # ---------------------------------------------------------------#
 def callBase64Encrypt():
-    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+    if not textboxFormatter(plaintextBox.get("0.0", "end")):
         messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
         return
     ciphertext=""
-    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
+    plaintext=textboxFormatter(plaintextBox.get("0.0", "end"))
     ciphertext=mb64.base64Encrypt(plaintext)
-    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxFormatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -344,13 +372,13 @@ def callBase64Encrypt():
 """
 # ---------------------------------------------------------------#
 def callSubstitutionEncrypt():
-    if not Textboxformatter(plaintextBox.get("0.0", "end")):
+    if not textboxFormatter(plaintextBox.get("0.0", "end")):
         messagebox.showwarning("Plaintext Empty","Cannot encrypt nothing")
         return
     ciphertext=""
-    plaintext=Textboxformatter(plaintextBox.get("0.0", "end"))
+    plaintext=textboxFormatter(plaintextBox.get("0.0", "end"))
     ciphertext=sub.substitutionEncrypt(plaintext)
-    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxformatter to be neccessary)
+    pyperclip.copy(ciphertext) # copies ciphertext to clipboard to avoid tkinter text box issues (those which cause textboxFormatter to be neccessary)
     ciphertextBox.delete("0.0", "end")
     ciphertextBox.insert("0.0", ciphertext)
 # ---------------------------------------------------------------#
@@ -361,13 +389,13 @@ def callSubstitutionEncrypt():
 """
 # ---------------------------------------------------------------#
 def callTrifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬¯°±²Þµ¶·œ¹º»¼ʧ½¿Ƚ♥
-    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+    if not textboxFormatter(ciphertextBox.get("0.0", "end")):
         messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
         return
     if not keyBox.get():
         messagebox.showwarning("Key Empty","Cannot decrypt without key")
         return
-    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
+    ciphertext=textboxFormatter(ciphertextBox.get("0.0", "end"))
     key=keyBox.get()
     plaintext = trfd.trifidDecrypt(key, ciphertext)
     plaintextBox.delete("0.0", "end")
@@ -380,14 +408,14 @@ def callTrifidDecrypt(): # !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTU
 """
 # ---------------------------------------------------------------#
 def callCaesarDecrypt():
-    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+    if not textboxFormatter(ciphertextBox.get("0.0", "end")):
         messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
         return
     if not shiftBox.get():
         messagebox.showwarning("Shift Empty","Cannot decrypt without shift")
         return
     shift=int(shiftBox.get()) #grab key and make sure I can do math with it
-    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end")) 
+    ciphertext=textboxFormatter(ciphertextBox.get("0.0", "end")) 
     plaintext=csr.caesarDecrypt(shift, ciphertext)
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
@@ -399,14 +427,14 @@ def callCaesarDecrypt():
 """
 # ---------------------------------------------------------------#
 def callRSAPrivDecrypt():
-    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+    if not textboxFormatter(ciphertextBox.get("0.0", "end")):
         messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
         return
     if not privateKeyBox.get():
         messagebox.showwarning("Private Key Empty","Cannot decrypt without privatekey")
         return
     privateKey = privateKeyBox.get()
-    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
+    ciphertext=textboxFormatter(ciphertextBox.get("0.0", "end"))
     plaintext = rsa.RSAPrivDecrypt(privateKey, ciphertext)
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
@@ -418,11 +446,11 @@ def callRSAPrivDecrypt():
 """
 # ---------------------------------------------------------------#
 def callBase64Decrypt():
-    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+    if not textboxFormatter(ciphertextBox.get("0.0", "end")):
         messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
         return
     plaintext=""
-    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
+    ciphertext=textboxFormatter(ciphertextBox.get("0.0", "end"))
     plaintext=mb64.base64Decrypt(ciphertext)
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
@@ -434,17 +462,16 @@ def callBase64Decrypt():
 """
 # ---------------------------------------------------------------#
 def callSubstitutionDecrypt():
-    if not Textboxformatter(ciphertextBox.get("0.0", "end")):
+    if not textboxFormatter(ciphertextBox.get("0.0", "end")):
         messagebox.showwarning("Ciphertext Empty","Cannot decrypt nothing")
         return
     plaintext=""
-    ciphertext=Textboxformatter(ciphertextBox.get("0.0", "end"))
+    ciphertext=textboxFormatter(ciphertextBox.get("0.0", "end"))
 
     plaintext=sub.substitutionDecrypt(ciphertext)
     
     plaintextBox.delete("0.0", "end")
     plaintextBox.insert("0.0", plaintext)
-
 # ---------------------------------------------------------------#
 """
     Purpose: changes password of user based on the UID provided
@@ -576,7 +603,7 @@ def newUser():
     Promise: remove user with given UID from credentials.txt and reordering the following users which will change all the UID
 """
 # ---------------------------------------------------------------#
-def removeuser():
+def removeUser():
     if not usernameBox.get() and not UIDBox.get():
         messagebox.showwarning("Username and UID Empty","Cannot remove user when no username or UID provided")
         return
@@ -618,7 +645,13 @@ def removeuser():
     os.remove("credentials.txt")
     os.rename("newcredentials.txt", "credentials.txt")
     os.remove("backupcredentials.txt")
-
+# ---------------------------------------------------------------#
+"""
+    Purpose: Find the UID that is for a given username
+    Requirement: pass in a username to be tested against
+    Promise: return a uid for the username if possible and let the user know if the username exists or if it contains a pipe character with messageboxes
+"""
+# ---------------------------------------------------------------#
 def getUID():
     if not usernameBox.get():
         messagebox.showwarning("Username Empty","UID cannot be returned from nothing")
@@ -651,7 +684,6 @@ def getUID():
             shutil.copyfile('backupcredentials.txt', 'credentials.txt')
             messagebox.showwarning("Generic Error",f"Error occured: {str(e)}")
             return
-
 # ---------------------------------------------------------------#
 """
     Purpose: check if user has valid credentials before initialising program
@@ -703,7 +735,7 @@ if ls.start():
     changePasswordButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#d833de", command= changePassword, text="changePassword", text_color="black", corner_radius=2, border_spacing=10) #buttons that call their namesake function
     changeUsernameButton=customtkinter.CTkButton(window, height=1, width=22, border_width=1, fg_color="#d833de", command= changeUsername, text="changeUsername", text_color="black", corner_radius=2, border_spacing=10)# everything other than the command is cosmetic
     newUserButton=customtkinter.CTkButton(window, height=1, width=11, border_width=1, fg_color="#d833de", command= newUser, text="newUser", text_color="black", corner_radius=2, border_spacing=10)
-    removeUserButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#d833de", command= removeuser, text="removeuser", text_color="black", corner_radius=2, border_spacing=10)
+    removeUserButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#d833de", command= removeUser, text="removeUser", text_color="black", corner_radius=2, border_spacing=10)
     getUIDButton=customtkinter.CTkButton(window, height=1, width=18, border_width=1, fg_color="#d833de", command= getUID, text="getUID", text_color="black", corner_radius=2, border_spacing=10)
 
     keyBox=customtkinter.CTkEntry(window, textvariable="", justify="left") #trifid key box/label, independant because that way it is kept when using other methods
